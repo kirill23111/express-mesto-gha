@@ -75,30 +75,30 @@ const createUser = (req, res) => {
 //     });
 // };
 const updateProfile = (req, res) => {
-  const { name, about, avatar } = req.body;
-
+  const { name, about } = req.body;
   const updatedUserFields = { name, about };
-  if (avatar) {
-    updatedUserFields.avatar = avatar;
-  }
-  const updatedUser = new User(updatedUserFields);
-  updatedUser
-    .validate()
-    .then(() => {
-      User.findByIdAndUpdate(req.user._id, updatedUserFields, { new: true })
-        .then((user) => {
-          if (!user) {
-            res.status(404).json({ message: 'Пользователь не найден' });
-            return;
-          }
-          res.status(200).json(user);
-        })
-        .catch((error) => {
-          res.status(500).json({ message: error.message });
-        });
+
+  User.findByIdAndUpdate(req.user._id, updatedUserFields, { new: true })
+    .then((user) => {
+      if (!user) {
+        res.status(404).json({ message: 'Пользователь не найден' });
+        return;
+      }
+      res.status(200).json(user);
     })
     .catch((error) => {
-      res.status(400).json({ message: error.message });
+      if (error.name === 'ValidationError' && error.errors.avatar) {
+        // Если ошибка связана с отсутствием аватара, игнорируем её
+        User.findById(req.user._id)
+          .then((user) => {
+            res.status(200).json(user);
+          })
+          .catch((error) => {
+            res.status(500).json({ message: error.message });
+          });
+      } else {
+        res.status(500).json({ message: error.message });
+      }
     });
 };
 
