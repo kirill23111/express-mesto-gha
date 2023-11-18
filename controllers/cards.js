@@ -7,17 +7,40 @@ const getCards = (req, res) => {
     .catch((error) => res.status(500).json({ message: error.message }));
 };
 
+// const createCard = (req, res) => {
+//   const { name, link } = req.body;
+
+//   if (!name || !link) {
+//     return res.status(400).json({ message: 'Поля name и link обязательны для создания карточки' });
+//   }
+
+//   const card = new Card({ name, link, owner: req.user._id });
+
+//   card.save()
+//     .then((savedCard) => res.status(201).json(savedCard))
+//     .catch((error) => {
+//       if (error.name === 'ValidationError') {
+//         const errors = Object.values(error.errors).map((err) => err.message);
+//         return res.status(400).json({ message: `Ошибка валидации: ${errors.join(', ')}` });
+//       }
+//       return res.status(500).json({ message: error.message });
+//     });
+// };
 const createCard = (req, res) => {
   const { name, link } = req.body;
 
   if (!name || !link) {
-    return res.status(400).json({ message: 'Поля name и link обязательны для создания карточки' });
+    return res.status(400).json({ message: 'Поля name и link обязательны' });
   }
 
   const card = new Card({ name, link, owner: req.user._id });
 
   card.save()
-    .then((savedCard) => res.status(201).json(savedCard))
+    .then((savedCard) => {
+      res.status(201).json(savedCard);
+      // Возвращаем null, чтобы явно указать, что ветвь завершена
+      return null;
+    })
     .catch((error) => {
       if (error.name === 'ValidationError') {
         const errors = Object.values(error.errors).map((err) => err.message);
