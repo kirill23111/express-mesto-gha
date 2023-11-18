@@ -14,10 +14,6 @@ const getUsers = (req, res) => {
 // Контроллер для получения пользователя по _id
 const getUserById = (req, res) => {
   const userId = req.params.userId; // Изменено
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    res.status(400).json({ message: 'Некорректный формат ID пользователя' });
-    return;
-  }
 
   User.findById(userId)
     .then((user) => {
@@ -51,11 +47,6 @@ const createUser = (req, res) => {
 // Контроллер для обновления профиля пользователя
 const updateProfile = (req, res) => {
   const { name, about } = req.body;
-
-  // Проверка длины имени
-  if (name && (name.length < 2 || name.length > 30)) {
-    return res.status(400).json({ message: 'Имя должно содержать от 2 до 30 символов' });
-  }
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
     .then((user) => {
