@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Card = require('../models/card'); // Путь к файлу с моделью карточки
 
 // Контроллер для получения всех карточек
