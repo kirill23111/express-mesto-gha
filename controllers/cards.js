@@ -16,6 +16,9 @@ const getCards = (req, res) => {
 const createCard = (req, res) => {
   const { name, link } = req.body;
 
+  if (!mongoose.Types.ObjectId.isValid(cardId)) {
+    return res.status(400).json({ message: 'Некорректный формат карточки' });
+  }
   // Проверка наличия обязательных полей
   if (!name || !link) {
     return res.status(400).json({ message: 'Поля name и link обязательны для создания карточки' });
