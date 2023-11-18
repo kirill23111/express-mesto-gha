@@ -37,6 +37,10 @@ db.once('open', () => {
   console.log('Подключено к MongoDB!');
 });
 
+app.use((req, res, next) => {
+  res.status(404).json({ message: 'не удалось обнаружить' });
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
