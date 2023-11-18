@@ -13,9 +13,9 @@ const getUsers = (req, res) => {
 
 // Контроллер для получения пользователя по _id
 const getUserById = (req, res) => {
-  const userId = req.params.userId;
+  const { userId } = req.params.userId;
 
-  User.findById(userId)
+  User.findById({ userId })
     .then((user) => {
       if (!user) {
         res.status(404).json({ message: 'Пользователь не найден' });
