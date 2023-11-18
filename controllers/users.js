@@ -31,7 +31,6 @@ const getUserById = (req, res) => {
 
 // Контроллер для создания нового пользователя
 const createUser = (req, res) => {
-  console.log(req.body)
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => {
