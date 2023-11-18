@@ -54,9 +54,55 @@ const deleteCardById = (req, res) => {
 };
 
 
+// const likeCard = (req, res) => {
+//   Card.findByIdAndUpdate(
+//     req.params.cardId,
+//     { $addToSet: { likes: req.user._id } },
+//     { new: true },
+//   )
+//     .then((card) => {
+//       if (!card) {
+//         res.status(404).json({ message: 'Карточка не найдена' });
+//         return;
+//       }
+
+//       res.status(200).json(card);
+//     })
+//     .catch((error) => {
+//       res.status(500).json({ message: error.message });
+//     });
+// };
+
+// // Контроллер для снятия лайка с карточки
+// const dislikeCard = (req, res) => {
+//   Card.findByIdAndUpdate(
+//     req.params.cardId,
+//     { $pull: { likes: req.user._id } },
+//     { new: true },
+//   )
+//     .then((card) => {
+//       if (!card) {
+//         res.status(404).json({ message: 'Карточка не найдена' });
+//         return;
+//       }
+
+//       res.status(200).json(card);
+//     })
+//     .catch((error) => {
+//       res.status(500).json({ message: error.message });
+//     });
+// };
+
 const likeCard = (req, res) => {
+  const { cardId } = req.params;
+
+  // Проверка корректности формата id карточки
+  if (!mongoose.Types.ObjectId.isValid(cardId)) {
+    return res.status(400).json({ message: 'Некорректный формат id карточки' });
+  }
+
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
@@ -73,10 +119,16 @@ const likeCard = (req, res) => {
     });
 };
 
-// Контроллер для снятия лайка с карточки
 const dislikeCard = (req, res) => {
+  const { cardId } = req.params;
+
+  // Проверка корректности формата id карточки
+  if (!mongoose.Types.ObjectId.isValid(cardId)) {
+    return res.status(400).json({ message: 'Некорректный формат id карточки' });
+  }
+
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    cardId,
     { $pull: { likes: req.user._id } },
     { new: true },
   )
