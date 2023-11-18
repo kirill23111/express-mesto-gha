@@ -74,31 +74,32 @@ const createUser = (req, res) => {
 //       res.status(400).json({ message: error.message });
 //     });
 // };
+const updateProfile = async (req, res) => {
+  try {
+    const newUserData = await User.findByIdAndUpdate(
+      req.user._id,
+      req.body,
+      { new: true, runValidators: true },
+    );
 
-const updateProfile = (req, res) => {
-  const { name, about, avatar } = req.body;
+    if (!newUserData) {
+      throw new Error('NotFound');
+    }
 
-  // Добавьте проверку на наличие поля avatar и установите его в пустую строку, если отсутствует
-  const updatedUser = new User({ name, about, avatar: avatar || '' });
+    return res.status(200).send(newUserData);
+  } catch (err) {
+    if (err.message === 'NotFound') {
+      return res
+        .status(404)
+        .send({ message: 'Пользователь указанным id не найден' });
+    }
 
-  updatedUser
-    .validate()
-    .then(() => {
-      User.findByIdAndUpdate(req.user._id, { name, about, avatar: avatar || '' }, { new: true })
-        .then((user) => {
-          if (!user) {
-            res.status(404).json({ message: 'Пользователь не найден' });
-            return;
-          }
-          res.status(200).json(user);
-        })
-        .catch((error) => {
-          res.status(500).json({ message: error.message });
-        });
-    })
-    .catch((error) => {
-      res.status(400).json({ message: error.message });
-    });
+    if (err.name === 'ValidationError') {
+      return res.status(400).send({ message: `${err.message}` });
+    }
+
+    return res.status(500).send({ message: 'на сервере произошла ошибка' });
+  }
 };
 
 // Контроллер для обновления аватара пользователя
