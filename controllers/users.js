@@ -13,9 +13,9 @@ const getUsers = (req, res) => {
 
 // Контроллер для получения пользователя по _id
 const getUserById = (req, res) => {
-  const { userId } = req.params.userId;
+  const userId = req.params.userId; // Изменено
 
-  User.findById( userId )
+  User.findById(userId)
     .then((user) => {
       if (!user) {
         res.status(404).json({ message: 'Пользователь не найден' });
@@ -29,17 +29,6 @@ const getUserById = (req, res) => {
     });
 };
 
-// // Контроллер для создания нового пользователя
-// const createUser = (req, res) => {
-//   const { name, about, avatar } = req.body;
-//   User.create({ name, about, avatar })
-//     .then((user) => {
-//       res.status(201).json(user);
-//     })
-//     .catch((error) => {
-//       res.status(500).json({ message: error.message });
-//     });
-// };
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
