@@ -47,18 +47,25 @@ const createUser = (req, res) => {
 // Контроллер для обновления профиля пользователя
 const updateProfile = (req, res) => {
   const { name, about } = req.body;
+  const updatedUser = new User({ name, about });
 
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
-    .then((user) => {
-      if (!user) {
-        res.status(404).json({ message: 'Пользователь не найден' });
-        return;
-      }
-
-      res.status(200).json(user);
+  updatedUser
+    .validate()
+    .then(() => {
+      User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
+        .then((user) => {
+          if (!user) {
+            res.status(404).json({ message: 'Пользователь не найден' });
+            return;
+          }
+          res.status(200).json(user);
+        })
+        .catch((error) => {
+          res.status(500).json({ message: error.message });
+        });
     })
     .catch((error) => {
-      res.status(500).json({ message: error.message });
+      res.status(400).json({ message: error.message });
     });
 };
 
