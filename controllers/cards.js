@@ -12,24 +12,6 @@ const getCards = (req, res) => {
     });
 };
 
-// Контроллер для создания новой карточки
-// const createCard = (req, res) => {
-//   const { name, link } = req.body;
-
-//   // Проверка наличия обязательных полей
-//   if (!name || !link) {
-//     return res.status(400).json({ message: 'Поля name и link обязательны для создания карточки' });
-//   }
-
-//   Card.create({ name, link, owner: req.user._id })
-//     .then((card) => {
-//       res.status(201).json(card);
-//     })
-//     .catch((error) => {
-//       res.status(500).json({ message: error.message });
-//     });
-// };
-
 const createCard = (req, res) => {
   const { name, link } = req.body;
 
@@ -65,8 +47,7 @@ const deleteCardById = (req, res) => {
   Card.findByIdAndDelete(cardId)
     .then((card) => {
       if (!card) {
-        res.status(404).json({ message: 'Карточка не найдена' });
-        return;
+        return res.status(404).json({ message: 'Карточка не найдена' });
       }
 
       res.status(200).json(card);
@@ -91,8 +72,7 @@ const likeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(404).json({ message: 'Карточка не найдена' });
-        return;
+        return res.status(404).json({ message: 'Карточка не найдена' });
       }
 
       res.status(200).json(card);
@@ -117,8 +97,7 @@ const dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(404).json({ message: 'Карточка не найдена' });
-        return;
+        return res.status(404).json({ message: 'Карточка не найдена' });
       }
 
       res.status(200).json(card);

@@ -37,7 +37,14 @@ db.once('open', () => {
   console.log('Подключено к MongoDB!');
 });
 
-app.use((req, res, next) => {
+// Добавим 'next' в параметры функции, чтобы избежать ошибки
+app.use((err, req, res, next) => {
+  console.log(err.status);
+  res.status(err.status || 500).send({ message: err.message });
+  next();
+});
+
+app.use((req, res) => {
   res.status(404).json({ message: 'не удалось обнаружить' });
 });
 

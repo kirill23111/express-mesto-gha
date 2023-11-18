@@ -14,7 +14,7 @@ const getUsers = (req, res) => {
 
 // Контроллер для получения пользователя по _id
 const getUserById = (req, res) => {
-  const userId = req.params.userId;
+  const { userId } = req.params;
 
   // Проверка корректности формата id пользователя
   if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -46,34 +46,11 @@ const createUser = (req, res) => {
       if (error.name === 'ValidationError') {
         res.status(400).json({ message: error.message });
       } else {
-                res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ message: 'Internal Server Error' });
       }
     });
 };
-// Контроллер для обновления профиля пользователя
-// const updateProfile = (req, res) => {
-//   const { name, about } = req.body;
-//   const updatedUser = new User({ name, about });
 
-//   updatedUser
-//     .validate()
-//     .then(() => {
-//       User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
-//         .then((user) => {
-//           if (!user) {
-//             res.status(404).json({ message: 'Пользователь не найден' });
-//             return;
-//           }
-//           res.status(200).json(user);
-//         })
-//         .catch((error) => {
-//           res.status(500).json({ message: error.message });
-//         });
-//     })
-//     .catch((error) => {
-//       res.status(400).json({ message: error.message });
-//     });
-// };
 const updateProfile = async (req, res) => {
   try {
     const newUserData = await User.findByIdAndUpdate(
@@ -91,14 +68,14 @@ const updateProfile = async (req, res) => {
     if (err.message === 'NotFound') {
       return res
         .status(404)
-        .send({ message: 'Пользователь указанным id не найден' });
+        .send({ message: 'Пользователь не найден' });
     }
 
     if (err.name === 'ValidationError') {
       return res.status(400).send({ message: `${err.message}` });
     }
 
-    return res.status(500).send({ message: 'на сервере произошла ошибка' });
+    return res.status(500).send({ message: 'произошла ошибка' });
   }
 };
 
