@@ -15,7 +15,7 @@ const getUsers = (req, res) => {
 const getUserById = (req, res) => {
   const { userId } = req.params.userId;
 
-  User.findById({ userId })
+  User.findById( userId )
     .then((user) => {
       if (!user) {
         res.status(404).json({ message: 'Пользователь не найден' });
@@ -29,18 +29,32 @@ const getUserById = (req, res) => {
     });
 };
 
-// Контроллер для создания нового пользователя
+// // Контроллер для создания нового пользователя
+// const createUser = (req, res) => {
+//   const { name, about, avatar } = req.body;
+//   User.create({ name, about, avatar })
+//     .then((user) => {
+//       res.status(201).json(user);
+//     })
+//     .catch((error) => {
+//       res.status(500).json({ message: error.message });
+//     });
+// };
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
+
   User.create({ name, about, avatar })
     .then((user) => {
       res.status(201).json(user);
     })
     .catch((error) => {
-      res.status(500).json({ message: error.message });
+      if (error.name === 'ValidationError') {
+        res.status(400).json({ message: error.message });
+      } else {
+                res.status(500).json({ message: 'Internal Server Error' });
+      }
     });
 };
-
 // Контроллер для обновления профиля пользователя
 const updateProfile = (req, res) => {
   const { name, about } = req.body;
