@@ -7,64 +7,62 @@ const getCards = (req, res) => {
     .catch((error) => res.status(500).json({ message: error.message }));
 };
 
-const createCard = (req, res) => {
-  const { name, link } = req.body;
+const createCard = async (req, res) => {
+  try {
+    const { name, link } = req.body;
+    const card = await new Card({ name, link, owner: req.user._id });
 
-  if (!name || !link) {
-    return res.status(400).json({ message: 'Поля name и link обязательны' });
+    return res.status(201).send(await card.save());
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(400).send({ message: `${error.message}` });
+    }
+    return res.status(500).send({ message: 'произошла ошибка' });
   }
-
-  const card = new Card({ name, link, owner: req.user._id });
-
-  card.save()
-    .then((savedCard) => res.status(201).json(savedCard))
-    .catch((error) => {
-      if (error.name === 'ValidationError') {
-        const errors = Object.values(error.errors).map((err) => err.message);
-        return res.status(400).json({ message: `Ошибка валидации: ${errors.join(', ')}` });
-      }
-      return res.status(500).json({ message: error.message });
-    });
 };
 
-const deleteCardById = (req, res) => {
-  const { cardId } = req.params;
+const deleteCardById = async (req, res) => {
+  try {
+    const { cardId } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    return res.status(400).json({ message: 'Некорректный формат id карточки' });
+    if (!mongoose.Types.ObjectId.isValid(cardId)) {
+      return res.status(400).json({ message: 'Некорректный формат id карточки' });
+    }
+
+    const card = await Card.findByIdAndDelete(cardId);
+
+    if (!card) {
+      return res.status(404).json({ message: 'Карточка не найдена' });
+    }
+
+    return res.status(200).json(card);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
-
-  Card.findByIdAndDelete(cardId)
-    .then((card) => {
-      if (!card) {
-        return res.status(404).json({ message: 'Карточка не найдена' });
-      }
-
-      return res.status(200).json(card);
-    })
-    .catch((error) => res.status(500).json({ message: error.message }));
 };
 
-const handleLikeDislike = (req, res, update) => {
-  const { cardId } = req.params;
+const handleLikeDislike = async (req, res, update) => {
+  try {
+    const { cardId } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(cardId)) {
-    return res.status(400).json({ message: 'Некорректный формат id карточки' });
+    if (!mongoose.Types.ObjectId.isValid(cardId)) {
+      return res.status(400).json({ message: 'Некорректный формат id карточки' });
+    }
+
+    const card = await Card.findByIdAndUpdate(
+      cardId,
+      update,
+      { new: true },
+    );
+
+    if (!card) {
+      return res.status(404).json({ message: 'Карточка не найдена' });
+    }
+
+    return res.status(200).json(card);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
-
-  Card.findByIdAndUpdate(
-    cardId,
-    update,
-    { new: true },
-  )
-    .then((card) => {
-      if (!card) {
-        return res.status(404).json({ message: 'Карточка не найдена' });
-      }
-
-      return res.status(200).json(card);
-    })
-    .catch((error) => res.status(500).json({ message: error.message }));
 };
 
 const likeCard = (req, res) => {

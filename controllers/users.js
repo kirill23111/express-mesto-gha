@@ -13,24 +13,25 @@ const getUsers = (req, res) => {
 };
 
 // Контроллер для получения пользователя по _id
-const getUserById = (req, res) => {
-  const { userId } = req.params;
+const getUserById = async (req, res) => {
+  try {
+    const { userId } = req.params;
 
-  // Проверка корректности формата id пользователя
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(400).json({ message: 'Некорректный формат id пользователя' });
+    // Проверка корректности формата id пользователя
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Некорректный формат id пользователя' });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'Пользователь не найден' });
+    }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
-
-  User.findById(userId)
-    .then((user) => {
-      if (!user) {
-        res.status(404).json({ message: 'Пользователь не найден' });
-        return;
-      }
-
-      res.status(200).json(user);
-    })
-    .catch((error) => res.status(500).json({ message: error.message }));
 };
 
 const createUser = (req, res) => {
