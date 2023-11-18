@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const User = require('../models/user'); // Путь к файлу с моделью пользователя
 
 // Контроллер для получения всех пользователей
@@ -13,7 +14,12 @@ const getUsers = (req, res) => {
 
 // Контроллер для получения пользователя по _id
 const getUserById = (req, res) => {
-  const userId = req.params.userId; // Изменено
+  const userId = req.params.userId;
+
+  // Проверка корректности формата id пользователя
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ message: 'Некорректный формат id пользователя' });
+  }
 
   User.findById(userId)
     .then((user) => {
