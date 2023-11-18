@@ -42,9 +42,7 @@ const deleteCardById = (req, res) => {
 
       return res.status(200).json(card);
     })
-    .catch((error) => {
-      return res.status(500).json({ message: error.message });
-    });
+    .catch((error) => res.status(500).json({ message: error.message }));
 };
 
 const handleLikeDislike = (req, res, update) => {
@@ -66,9 +64,7 @@ const handleLikeDislike = (req, res, update) => {
 
       return res.status(200).json(card);
     })
-    .catch((error) => {
-      return res.status(500).json({ message: error.message });
-    });
+    .catch((error) => res.status(500).json({ message: error.message }));
 };
 
 const likeCard = (req, res) => {

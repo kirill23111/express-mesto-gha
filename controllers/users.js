@@ -30,9 +30,7 @@ const getUserById = (req, res) => {
 
       res.status(200).json(user);
     })
-    .catch((error) => {
-      return res.status(500).json({ message: error.message });
-    });
+    .catch((error) => res.status(500).json({ message: error.message }));
 };
 
 const createUser = (req, res) => {
