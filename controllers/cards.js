@@ -53,46 +53,6 @@ const deleteCardById = (req, res) => {
     });
 };
 
-
-// const likeCard = (req, res) => {
-//   Card.findByIdAndUpdate(
-//     req.params.cardId,
-//     { $addToSet: { likes: req.user._id } },
-//     { new: true },
-//   )
-//     .then((card) => {
-//       if (!card) {
-//         res.status(404).json({ message: 'Карточка не найдена' });
-//         return;
-//       }
-
-//       res.status(200).json(card);
-//     })
-//     .catch((error) => {
-//       res.status(500).json({ message: error.message });
-//     });
-// };
-
-// // Контроллер для снятия лайка с карточки
-// const dislikeCard = (req, res) => {
-//   Card.findByIdAndUpdate(
-//     req.params.cardId,
-//     { $pull: { likes: req.user._id } },
-//     { new: true },
-//   )
-//     .then((card) => {
-//       if (!card) {
-//         res.status(404).json({ message: 'Карточка не найдена' });
-//         return;
-//       }
-
-//       res.status(200).json(card);
-//     })
-//     .catch((error) => {
-//       res.status(500).json({ message: error.message });
-//     });
-// };
-
 const likeCard = (req, res) => {
   const { cardId } = req.params;
 
