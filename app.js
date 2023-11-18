@@ -14,12 +14,14 @@ app.use((req, res, next) => {
   req.user = {
     _id: '5e44647cabaee231048130ab',
   };
-
   next();
 });
 
+
 app.use(express.json());
-app.use(morgan());
+app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
+
 app.use('/', cardsRoutes);
 app.use('/', usersRoutes);
 
