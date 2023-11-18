@@ -31,9 +31,14 @@ const createCard = (req, res) => {
 
 // Контроллер для удаления карточки по _id
 const deleteCardById = (req, res) => {
-  const { cardId } = req.params.cardId;
+  const { cardId } = req.params;
 
-  Card.findByIdAndRemove({ cardId })
+  // Проверка корректности формата id карточки
+  if (!mongoose.Types.ObjectId.isValid(cardId)) {
+    return res.status(400).json({ message: 'Некорректный формат id карточки' });
+  }
+
+  Card.findByIdAndDelete(cardId)
     .then((card) => {
       if (!card) {
         res.status(404).json({ message: 'Карточка не найдена' });
