@@ -1,10 +1,13 @@
 const mongoose = require('mongoose');
 const Card = require('../models/card');
+const {
+  SUCCESS, INTERNAL_ERROR, CREATED, NOT_FOUND,
+} = require('../constans/codes');
 
 const getCards = (req, res) => {
   Card.find()
-    .then((cards) => res.status(200).json(cards))
-    .catch((error) => res.status(500).json({ message: error.message }));
+    .then((cards) => res.status(SUCCESS).json(cards))
+    .catch((error) => res.status(INTERNAL_ERROR).json({ message: error.message }));
 };
 
 const createCard = async (req, res) => {
@@ -12,12 +15,12 @@ const createCard = async (req, res) => {
     const { name, link } = req.body;
     const card = await new Card({ name, link, owner: req.user._id });
 
-    return res.status(201).send(await card.save());
+    return res.status(CREATED).send(await card.save());
   } catch (error) {
     if (error.name === 'ValidationError') {
       return res.status(400).send({ message: `${error.message}` });
     }
-    return res.status(500).send({ message: 'произошла ошибка' });
+    return res.status(INTERNAL_ERROR).send({ message: 'произошла ошибка' });
   }
 };
 
@@ -32,12 +35,12 @@ const deleteCardById = async (req, res) => {
     const card = await Card.findByIdAndDelete(cardId);
 
     if (!card) {
-      return res.status(404).json({ message: 'Карточка не найдена' });
+      return res.status(NOT_FOUND).json({ message: 'Карточка не найдена' });
     }
 
-    return res.status(200).json(card);
+    return res.status(SUCCESS).json(card);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(INTERNAL_ERROR).json({ message: error.message });
   }
 };
 
@@ -56,12 +59,12 @@ const handleLikeDislike = async (req, res, update) => {
     );
 
     if (!card) {
-      return res.status(404).json({ message: 'Карточка не найдена' });
+      return res.status(NOT_FOUND).json({ message: 'Карточка не найдена' });
     }
 
-    return res.status(200).json(card);
+    return res.status(SUCCESS).json(card);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(INTERNAL_ERROR).json({ message: error.message });
   }
 };
 

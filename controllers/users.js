@@ -1,29 +1,49 @@
 // const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const User = require('../models/user'); // Путь к файлу с моделью пользователя
+const {
+  SUCCESS, INTERNAL_ERROR, CREATED, NOT_FOUND,
+} = require('../constans/codes');
 
 // Контроллер для получения всех пользователей
 const getUsers = (req, res) => {
   User.find()
     .then((users) => {
-      res.status(200).json(users);
+      res.status(SUCCESS).json(users);
     })
     .catch((err) => {
       console.log(err.status);
-      res.status(500).json({ message: 'Произошла ошибка' });
+      res.status(INTERNAL_ERROR).json({ message: 'Произошла ошибка' });
     });
 };
 
 // Контроллер для получения пользователя по _id
+const getUserById = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Проверка корректности формата id пользователя
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Некорректный формат id пользователя' });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(NOT_FOUND).json({ message: 'Пользователь не найден' });
+    }
+
+    return res.status(SUCCESS).json(user);
+  } catch (error) {
+    return res.status(INTERNAL_ERROR).json({ message: error.message });
+  }
+};
+
 // const getUserById = async (req, res) => {
 //   try {
 //     const { userId } = req.params;
 
-//     // Проверка корректности формата id пользователя
-//     if (!mongoose.Types.ObjectId.isValid(userId)) {
-//       return res.status(400).json({ message: 'Некорректный формат id пользователя' });
-//     }
-
-//     const user = await user.findById(userId);
+//     const user = await User.findById(userId);
 
 //     if (!user) {
 //       return res.status(404).json({ message: 'Пользователь не найден' });
@@ -31,38 +51,22 @@ const getUsers = (req, res) => {
 
 //     return res.status(200).json(user);
 //   } catch (error) {
-//     return res.status(500).json({ message: error.message });
+//     return res.status(500).json({ message: 'Произошла ошибка при обработке запроса' });
 //   }
 // };
-
-const getUserById = async (req, res) => {
-  try {
-    const { userId } = req.params;
-
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ message: 'Пользователь не найден' });
-    }
-
-    return res.status(200).json(user);
-  } catch (error) {
-    return res.status(500).json({ message: 'Произошла ошибка при обработке запроса' });
-  }
-};
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
     .then((user) => {
-      res.status(201).json(user);
+      res.status(CREATED).json(user);
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
         res.status(400).json({ message: error.message });
       } else {
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(INTERNAL_ERROR).json({ message: 'Internal Server Error' });
       }
     });
 };
@@ -79,11 +83,11 @@ const updateProfile = async (req, res) => {
       throw new Error('NotFound');
     }
 
-    return res.status(200).send(newUserData);
+    return res.status(SUCCESS).send(newUserData);
   } catch (err) {
     if (err.message === 'NotFound') {
       return res
-        .status(404)
+        .status(NOT_FOUND)
         .send({ message: 'Пользователь не найден' });
     }
 
@@ -91,26 +95,55 @@ const updateProfile = async (req, res) => {
       return res.status(400).send({ message: `${err.message}` });
     }
 
-    return res.status(500).send({ message: 'произошла ошибка' });
+    return res.status(INTERNAL_ERROR).send({ message: 'произошла ошибка' });
   }
 };
 
 // Контроллер для обновления аватара пользователя
-const updateAvatar = (req, res) => {
-  const { avatar } = req.body;
+// const updateAvatar = (req, res) => {
+//   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-    .then((user) => {
-      if (!user) {
-        res.status(404).json({ message: 'Пользователь не найден' });
-        return;
-      }
+//   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
+//     .then((user) => {
+//       if (!user) {
+//         res.status(NOT_FOUND).json({ message: 'Пользователь не найден' });
+//         return;
+//       }
+//       res.status(SUCCESS).json(user);
+//     })
+//     .catch((error) => {
+//       if (error.message == 'ValidationError') {
+//         return res.status(400).send({ message: `${error.message}` });
+//       }
+//       res.status(INTERNAL_ERROR).json({ message: error.message });
+//     });
+// };
+const updateAvatar = async (req, res) => {
+  try {
+    const { avatar } = req.body;
 
-      res.status(200).json(user);
-    })
-    .catch((error) => {
-      res.status(500).json({ message: error.message });
-    });
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { avatar },
+      { new: true, runValidators: true },
+    );
+
+    if (!updatedUser) {
+      throw new Error('NotFound');
+    }
+
+    return res.status(SUCCESS).json(updatedUser);
+  } catch (error) {
+    if (error.message === 'NotFound') {
+      return res.status(NOT_FOUND).json({ message: 'Пользователь не найден' });
+    }
+
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: error.message });
+    }
+
+    return res.status(INTERNAL_ERROR).json({ message: 'Произошла ошибка' });
+  }
 };
 
 module.exports = {

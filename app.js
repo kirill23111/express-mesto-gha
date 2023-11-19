@@ -6,6 +6,9 @@ const mongoose = require('mongoose');
 
 const app = express();
 const PORT = 3000;
+const {
+  INTERNAL_ERROR, NOT_FOUND,
+} = require('./constans/codes');
 const cardsRoutes = require('./routes/cardsRoutes');
 const usersRoutes = require('./routes/usersRoutes');
 
@@ -43,12 +46,12 @@ db.once('open', () => {
 // Добавим 'next' в параметры функции, чтобы избежать ошибки
 app.use((err, req, res, next) => {
   console.log(err.status);
-  res.status(500).send({ message: 'Произошла ошибка' });
+  res.status(INTERNAL_ERROR).send({ message: 'Произошла ошибка' });
   next();
 });
 
 app.use((req, res) => {
-  res.status(404).json({ message: 'не удалось обнаружить' });
+  res.status(NOT_FOUND).json({ message: 'не удалось обнаружить' });
 });
 
 app.listen(PORT, () => {
