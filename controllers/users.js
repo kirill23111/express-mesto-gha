@@ -26,13 +26,13 @@ const getUserById = async (req, res) => {
     }
 
     return res.status(SUCCESS).json(user);
-  } catch (err) {
-    if (err.message === 'NotFound') {
+  } catch (error) {
+    if (error.message === 'NotFound') {
       return res
         .status(NOT_FOUND)
         .send({ message: 'Пользователь не найден' });
     }
-    if (err.name === 'CastError') {
+    if (error.name === 'CastError') {
       return res.status(BAD_REQUEST).send({ message: 'Передан невалидный id' });
     }
     return res.status(INTERNAL_ERROR).send({ message: 'Произошла ошибка' });
