@@ -43,6 +43,7 @@ const deleteCardById = async (req, res) => {
     if (error.name === 'CastError') {
       return res.status(BAD_REQUEST).send({ message: 'Передано неверное id карточки' });
     }
+    return res.status(INTERNAL_ERROR).send({ message: 'Произошла ошибка' });
   }
 };
 
@@ -71,6 +72,7 @@ const handleLikeDislike = async (req, res, update) => {
     if (error.name === 'CastError') {
       return res.status(BAD_REQUEST).send({ message: 'Передано неверное id карточки' });
     }
+    return res.status(INTERNAL_ERROR).send({ message: 'Произошла ошибка' });
   }
 };
 // const handleLikeDislike = async (req, res, update) => {
