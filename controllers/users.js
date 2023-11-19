@@ -1,5 +1,4 @@
 // const mongoose = require('mongoose');
-const mongoose = require('mongoose');
 const User = require('../models/user'); // Путь к файлу с моделью пользователя
 const {
   SUCCESS, INTERNAL_ERROR, CREATED, NOT_FOUND, BAD_REQUEST,
@@ -20,14 +19,7 @@ const getUsers = (req, res) => {
 // Контроллер для получения пользователя по _id
 const getUserById = async (req, res) => {
   try {
-    const { userId } = req.params;
-
-    // Проверка корректности формата id пользователя
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(BAD_REQUEST).json({ message: 'Некорректный формат id пользователя' });
-    }
-
-    const user = await User.findById(userId);
+    const user = await User.findById(req.params.userId);
 
     if (!user) {
       return res.status(NOT_FOUND).json({ message: 'Пользователь не найден' });
@@ -38,22 +30,6 @@ const getUserById = async (req, res) => {
     return res.status(INTERNAL_ERROR).json({ message: error.message });
   }
 };
-
-// const getUserById = async (req, res) => {
-//   try {
-//     const { userId } = req.params;
-
-//     const user = await User.findById(userId);
-
-//     if (!user) {
-//       return res.status(404).json({ message: 'Пользователь не найден' });
-//     }
-
-//     return res.status(200).json(user);
-//   } catch (error) {
-//     return res.status(500).json({ message: 'Произошла ошибка при обработке запроса' });
-//   }
-// };
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
