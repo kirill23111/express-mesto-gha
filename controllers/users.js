@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 const User = require('../models/user'); // Путь к файлу с моделью пользователя
 const {
-  SUCCESS, INTERNAL_ERROR, CREATED, NOT_FOUND, BAD_REQUEST
+  SUCCESS, INTERNAL_ERROR, CREATED, NOT_FOUND, BAD_REQUEST,
 } = require('../constans/codes');
 
 // Контроллер для получения всех пользователей
@@ -99,25 +99,6 @@ const updateProfile = async (req, res) => {
   }
 };
 
-// Контроллер для обновления аватара пользователя
-// const updateAvatar = (req, res) => {
-//   const { avatar } = req.body;
-
-//   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-//     .then((user) => {
-//       if (!user) {
-//         res.status(NOT_FOUND).json({ message: 'Пользователь не найден' });
-//         return;
-//       }
-//       res.status(SUCCESS).json(user);
-//     })
-//     .catch((error) => {
-//       if (error.message == 'ValidationError') {
-//         return res.status(400).send({ message: `${error.message}` });
-//       }
-//       res.status(INTERNAL_ERROR).json({ message: error.message });
-//     });
-// };
 const updateAvatar = async (req, res) => {
   try {
     const { avatar } = req.body;

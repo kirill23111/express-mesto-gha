@@ -1,10 +1,8 @@
 const mongoose = require('mongoose');
 const Card = require('../models/card');
 const {
-  SUCCESS, INTERNAL_ERROR, CREATED, NOT_FOUND, BAD_REQUEST
+  SUCCESS, INTERNAL_ERROR, CREATED, NOT_FOUND, BAD_REQUEST,
 } = require('../constans/codes');
-console.log(INTERNAL_ERROR)
-
 
 const getCards = (req, res) => {
   Card.find()
@@ -26,23 +24,44 @@ const createCard = async (req, res) => {
   }
 };
 
+// const deleteCardById = async (req, res) => {
+//   try {
+//     const { cardId } = req.params;
+
+//     if (!mongoose.Types.ObjectId.isValid(cardId)) {
+//       return res.status(BAD_REQUEST).json({ message: 'Некорректный формат id карточки' });
+//     }
+
+//     const card = await Card.findByIdAndDelete(cardId);
+
+//     if (!card) {
+//       return res.status(NOT_FOUND).json({ message: 'Карточка не найдена' });
+//     }
+
+//     return res.status(SUCCESS).json({ message: 'Карточка успешно удалена' });
+//   } catch (error) {
+//     return res.status(INTERNAL_ERROR).json({ message: error.message });
+//   }
+// };
 const deleteCardById = async (req, res) => {
   try {
-    const { cardId } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(cardId)) {
-      return res.status(BAD_REQUEST).json({ message: 'Некорректный формат id карточки' });
-    }
-
-    const card = await Card.findByIdAndDelete(cardId);
+    const card = await Card.findByIdAndDelete(req.params.cardId);
 
     if (!card) {
       return res.status(NOT_FOUND).json({ message: 'Карточка не найдена' });
     }
 
-    return res.status(SUCCESS).json(card);
-  } catch (error) {
-    return res.status(INTERNAL_ERROR).json({ message: error.message });
+    return res.status(SUCCESS).json({ message: 'Карточка успешно удалена' });
+  } catch (err) {
+    if (err.message === 'NotFound') {
+      return res
+        .status(404)
+        .send({ message: 'Карточка указанным id не найдена' });
+    }
+
+    if (err.name === 'CastError') {
+      return res.status(400).send({ message: 'Передано невалидное id карточки' });
+    }
   }
 };
 
