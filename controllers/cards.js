@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
 const Card = require('../models/card');
 const {
-  SUCCESS, INTERNAL_ERROR, CREATED, NOT_FOUND,
+  SUCCESS, INTERNAL_ERROR, CREATED, NOT_FOUND, BAD_REQUEST
 } = require('../constans/codes');
+console.log(INTERNAL_ERROR)
+
 
 const getCards = (req, res) => {
   Card.find()
@@ -18,7 +20,7 @@ const createCard = async (req, res) => {
     return res.status(CREATED).send(await card.save());
   } catch (error) {
     if (error.name === 'ValidationError') {
-      return res.status(400).send({ message: `${error.message}` });
+      return res.status(BAD_REQUEST).send({ message: `${error.message}` });
     }
     return res.status(INTERNAL_ERROR).send({ message: 'произошла ошибка' });
   }
@@ -29,7 +31,7 @@ const deleteCardById = async (req, res) => {
     const { cardId } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(cardId)) {
-      return res.status(400).json({ message: 'Некорректный формат id карточки' });
+      return res.status(BAD_REQUEST).json({ message: 'Некорректный формат id карточки' });
     }
 
     const card = await Card.findByIdAndDelete(cardId);
@@ -49,7 +51,7 @@ const handleLikeDislike = async (req, res, update) => {
     const { cardId } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(cardId)) {
-      return res.status(400).json({ message: 'Некорректный формат id карточки' });
+      return res.status(BAD_REQUEST).json({ message: 'Некорректный формат id карточки' });
     }
 
     const card = await Card.findByIdAndUpdate(

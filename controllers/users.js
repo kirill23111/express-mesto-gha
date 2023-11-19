@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 const User = require('../models/user'); // Путь к файлу с моделью пользователя
 const {
-  SUCCESS, INTERNAL_ERROR, CREATED, NOT_FOUND,
+  SUCCESS, INTERNAL_ERROR, CREATED, NOT_FOUND, BAD_REQUEST
 } = require('../constans/codes');
 
 // Контроллер для получения всех пользователей
@@ -24,7 +24,7 @@ const getUserById = async (req, res) => {
 
     // Проверка корректности формата id пользователя
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ message: 'Некорректный формат id пользователя' });
+      return res.status(BAD_REQUEST).json({ message: 'Некорректный формат id пользователя' });
     }
 
     const user = await User.findById(userId);
@@ -64,7 +64,7 @@ const createUser = (req, res) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        res.status(400).json({ message: error.message });
+        res.status(BAD_REQUEST).json({ message: error.message });
       } else {
         res.status(INTERNAL_ERROR).json({ message: 'Internal Server Error' });
       }
@@ -92,7 +92,7 @@ const updateProfile = async (req, res) => {
     }
 
     if (err.name === 'ValidationError') {
-      return res.status(400).send({ message: `${err.message}` });
+      return res.status(BAD_REQUEST).send({ message: `${err.message}` });
     }
 
     return res.status(INTERNAL_ERROR).send({ message: 'произошла ошибка' });
@@ -139,7 +139,7 @@ const updateAvatar = async (req, res) => {
     }
 
     if (error.name === 'ValidationError') {
-      return res.status(400).json({ message: error.message });
+      return res.status(BAD_REQUEST).json({ message: error.message });
     }
 
     return res.status(INTERNAL_ERROR).json({ message: 'Произошла ошибка' });
