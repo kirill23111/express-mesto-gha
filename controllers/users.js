@@ -1,14 +1,14 @@
 // const mongoose = require('mongoose');
-const user = require('../models/user'); // Путь к файлу с моделью пользователя
+const User = require('../models/user'); // Путь к файлу с моделью пользователя
 
 // Контроллер для получения всех пользователей
 const getUsers = (req, res) => {
-  user.find()
+  User.find()
     .then((users) => {
       res.status(200).json(users);
     })
-    .catch((error) => {
-      console.error(error.stack);
+    .catch((err) => {
+      console.log(err.status);
       res.status(500).json({ message: 'Произошла ошибка' });
     });
 };
@@ -38,7 +38,7 @@ const getUserById = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const user = await user.findById(userId);
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: 'Пользователь не найден' });
@@ -53,7 +53,7 @@ const getUserById = async (req, res) => {
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
-  user.create({ name, about, avatar })
+  User.create({ name, about, avatar })
     .then((user) => {
       res.status(201).json(user);
     })
@@ -68,7 +68,7 @@ const createUser = (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const newUserData = await user.findByIdAndUpdate(
+    const newUserData = await User.findByIdAndUpdate(
       req.user._id,
       req.body,
       { new: true, runValidators: true },
@@ -98,7 +98,7 @@ const updateProfile = async (req, res) => {
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
-  user.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         res.status(404).json({ message: 'Пользователь не найден' });

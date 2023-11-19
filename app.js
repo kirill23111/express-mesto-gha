@@ -42,7 +42,7 @@ db.once('open', () => {
 
 // Добавим 'next' в параметры функции, чтобы избежать ошибки
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.log(err.status);
   res.status(500).send({ message: 'Произошла ошибка' });
   next();
 });
