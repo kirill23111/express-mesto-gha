@@ -4,6 +4,8 @@ const morgan = require('morgan');
 
 const mongoose = require('mongoose');
 
+const http2 = require('http2');
+
 const app = express();
 const PORT = 3000;
 const cardsRoutes = require('./routes/cardsRoutes');
@@ -43,12 +45,12 @@ db.once('open', () => {
 // Добавим 'next' в параметры функции, чтобы избежать ошибки
 app.use((err, req, res, next) => {
   console.log(err.status);
-  res.status(500).send({ message: 'Произошла ошибка' });
+  res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
   next();
 });
 
 app.use((req, res) => {
-  res.status(404).json({ message: 'не удалось обнаружить' });
+  res.status(http2.constants.HTTP_STATUS_NOT_FOUND).json({ message: 'Не удалось обнаружить' });
 });
 
 app.listen(PORT, () => {

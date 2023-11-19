@@ -1,15 +1,16 @@
 // const mongoose = require('mongoose');
+const http2 = require('http2');
 const User = require('../models/user'); // Путь к файлу с моделью пользователя
 
 // Контроллер для получения всех пользователей
 const getUsers = (req, res) => {
   User.find()
     .then((users) => {
-      res.status(200).json(users);
+      res.status(http2.constants.HTTP_STATUS_OK).json(users);
     })
     .catch((err) => {
       console.log(err.status);
-      res.status(500).json({ message: 'Произошла ошибка' });
+      res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).json({ message: 'Произошла ошибка' });
     });
 };
 
@@ -34,6 +35,7 @@ const getUsers = (req, res) => {
 //     return res.status(500).json({ message: error.message });
 //   }
 // };
+
 const getUserById = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -41,12 +43,12 @@ const getUserById = async (req, res) => {
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.status(404).json({ message: 'Пользователь не найден' });
+      return res.status(http2.constants.HTTP_STATUS_NOT_FOUND).json({ message: 'Пользователь не найден' });
     }
 
-    return res.status(200).json(user);
+    return res.status(http2.constants.HTTP_STATUS_OK).json(user);
   } catch (error) {
-    return res.status(500).json({ message: 'Произошла ошибка при обработке запроса' });
+    return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).json({ message: 'Произошла ошибка при обработке запроса' });
   }
 };
 
@@ -55,13 +57,13 @@ const createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => {
-      res.status(201).json(user);
+      res.status(http2.constants.HTTP_STATUS_CREATED).json(user);
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        res.status(400).json({ message: error.message });
+        res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).json({ message: error.message });
       } else {
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
       }
     });
 };
@@ -78,37 +80,37 @@ const updateProfile = async (req, res) => {
       throw new Error('NotFound');
     }
 
-    return res.status(200).send(newUserData);
+    return res.status(http2.constants.HTTP_STATUS_OK).send(newUserData);
   } catch (err) {
     if (err.message === 'NotFound') {
       return res
-        .status(404)
+        .status(http2.constants.HTTP_STATUS_NOT_FOUND)
         .send({ message: 'Пользователь не найден' });
     }
 
     if (err.name === 'ValidationError') {
-      return res.status(400).send({ message: `${err.message}` });
+      return res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: `${err.message}` });
     }
 
-    return res.status(500).send({ message: 'произошла ошибка' });
+    return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
   }
 };
 
-// Контроллер для обновления аватара пользователя
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        res.status(404).json({ message: 'Пользователь не найден' });
+        res.status(http2.constants.HTTP_STATUS_NOT_FOUND).json({ message: 'Пользователь не найден' });
         return;
       }
 
-      res.status(200).json(user);
+      res.status(http2.constants.HTTP_STATUS_OK).json(user);
     })
     .catch((error) => {
-      res.status(500).json({ message: error.message });
+      res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
+        .json({ message: error.message });
     });
 };
 
