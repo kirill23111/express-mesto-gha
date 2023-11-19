@@ -45,12 +45,12 @@ db.once('open', () => {
 // Добавим 'next' в параметры функции, чтобы избежать ошибки
 app.use((err, req, res, next) => {
   console.log(err.status);
-  res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
+  res.status(500).send({ message: 'Произошла ошибка' });
   next();
 });
 
 app.use((req, res) => {
-  res.status(http2.constants.HTTP_STATUS_NOT_FOUND).json({ message: 'Не удалось обнаружить' });
+  res.status(404).json({ message: 'не удалось обнаружить' });
 });
 
 app.listen(PORT, () => {
