@@ -1,4 +1,4 @@
-// const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const Card = require('../models/card');
 const {
   SUCCESS, INTERNAL_ERROR, CREATED, NOT_FOUND, BAD_REQUEST,
