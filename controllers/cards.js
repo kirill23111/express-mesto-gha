@@ -46,32 +46,13 @@ const deleteCardById = async (req, res) => {
   }
 };
 
-// const handleLikeDislike = async (req, res, update) => {
-//   try {
-//     const { cardId } = req.params;
-
-//     if (!mongoose.Types.ObjectId.isValid(cardId)) {
-//       return res.status(BAD_REQUEST).json({ message: 'Некорректный формат id карточки' });
-//     }
-
-//     const card = await Card.findByIdAndUpdate(
-//       cardId,
-//       update,
-//       { new: true },
-//     );
-
-//     if (!card) {
-//       return res.status(NOT_FOUND).json({ message: 'Карточка не найдена' });
-//     }
-
-//     return res.status(SUCCESS).json(card);
-//   } catch (error) {
-//     return res.status(INTERNAL_ERROR).json({ message: error.message });
-//   }
-// };
 const handleLikeDislike = async (req, res, update) => {
   try {
     const { cardId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(cardId)) {
+      return res.status(BAD_REQUEST).json({ message: 'Некорректный формат id карточки' });
+    }
 
     const card = await Card.findByIdAndUpdate(
       cardId,
@@ -85,13 +66,32 @@ const handleLikeDislike = async (req, res, update) => {
 
     return res.status(SUCCESS).json(card);
   } catch (error) {
-    if (error.name === 'CastError') {
-      return res.status(BAD_REQUEST).json({ message: 'Передано неверное id карточки' });
-    }
-
-    return res.status(INTERNAL_ERROR).json({ message: 'Произошла ошибка' });
+    return res.status(INTERNAL_ERROR).json({ message: error.message });
   }
 };
+// const handleLikeDislike = async (req, res, update) => {
+//   try {
+//     const { cardId } = req.params;
+
+//     const card = await Card.findByIdAndUpdate(
+//       cardId,
+//       update,
+//       { new: true },
+//     );
+
+//     if (!card) {
+//       return res.status(NOT_FOUND).json({ message: 'Карточка не найдена' });
+//     }
+
+//     return res.status(SUCCESS).json(card);
+//   } catch (error) {
+//     if (error.name === 'CastError') {
+//       return res.status(BAD_REQUEST).json({ message: 'Передано неверное id карточки' });
+//     }
+
+//     return res.status(INTERNAL_ERROR).json({ message: 'Произошла ошибка' });
+//   }
+// };
 
 const likeCard = (req, res) => {
   handleLikeDislike(req, res, { $addToSet: { likes: req.user._id } });

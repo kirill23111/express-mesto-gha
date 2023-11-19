@@ -19,7 +19,14 @@ const getUsers = (req, res) => {
 // Контроллер для получения пользователя по _id
 const getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId);
+    const { userId } = req.params;
+
+    // Проверка корректности формата id пользователя
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(BAD_REQUEST).json({ message: 'Некорректный формат id пользователя' });
+    }
+
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.status(NOT_FOUND).json({ message: 'Пользователь не найден' });
