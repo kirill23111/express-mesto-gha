@@ -1,5 +1,4 @@
 // const mongoose = require('mongoose');
-const http2 = require('http2');
 const User = require('../models/user'); // Путь к файлу с моделью пользователя
 
 // Контроллер для получения всех пользователей

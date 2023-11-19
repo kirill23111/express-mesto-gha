@@ -4,8 +4,6 @@ const morgan = require('morgan');
 
 const mongoose = require('mongoose');
 
-const http2 = require('http2');
-
 const app = express();
 const PORT = 3000;
 const cardsRoutes = require('./routes/cardsRoutes');
