@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const Card = require('../models/card');
+const card = require('../models/card');
 
 const getCards = (req, res) => {
-  Card.find()
+  card.find()
     .then((cards) => res.status(200).json(cards))
     .catch((error) => res.status(500).json({ message: error.message }));
 };
@@ -29,7 +29,7 @@ const deleteCardById = async (req, res) => {
       return res.status(400).json({ message: 'Некорректный формат id карточки' });
     }
 
-    const card = await Card.findByIdAndDelete(cardId);
+    const card = await card.findByIdAndDelete(cardId);
 
     if (!card) {
       return res.status(404).json({ message: 'Карточка не найдена' });
@@ -49,7 +49,7 @@ const handleLikeDislike = async (req, res, update) => {
       return res.status(400).json({ message: 'Некорректный формат id карточки' });
     }
 
-    const card = await Card.findByIdAndUpdate(
+    const card = await card.findByIdAndUpdate(
       cardId,
       update,
       { new: true },

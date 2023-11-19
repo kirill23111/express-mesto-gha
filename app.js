@@ -30,20 +30,20 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-// const db = mongoose.connection;
+const db = mongoose.connection;
 
-// db.on('error', (error) => {
-//   console.error('Ошибка подключения к MongoDB:', error);
-// });
+db.on('error', (error) => {
+  console.error('Ошибка подключения к MongoDB:', error);
+});
 
-// db.once('open', () => {
-//   console.log('Подключено к MongoDB!');
-// });
+db.once('open', () => {
+  console.log('Подключено к MongoDB!');
+});
 
 // Добавим 'next' в параметры функции, чтобы избежать ошибки
 app.use((err, req, res, next) => {
-  console.log(err.status);
-  res.status(err.status || 500).send({ message: err.message });
+  console.error(err.stack);
+  res.status(500).send({ message: 'Произошла ошибка' });
   next();
 });
 

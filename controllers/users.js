@@ -1,28 +1,44 @@
-const mongoose = require('mongoose');
-const User = require('../models/user'); // Путь к файлу с моделью пользователя
+// const mongoose = require('mongoose');
+const user = require('../models/user'); // Путь к файлу с моделью пользователя
 
 // Контроллер для получения всех пользователей
 const getUsers = (req, res) => {
-  User.find()
+  user.find()
     .then((users) => {
       res.status(200).json(users);
     })
     .catch((error) => {
-      res.status(500).json({ message: error.message });
+      console.error(error.stack);
+      res.status(500).json({ message: 'Произошла ошибка' });
     });
 };
 
 // Контроллер для получения пользователя по _id
+// const getUserById = async (req, res) => {
+//   try {
+//     const { userId } = req.params;
+
+//     // Проверка корректности формата id пользователя
+//     if (!mongoose.Types.ObjectId.isValid(userId)) {
+//       return res.status(400).json({ message: 'Некорректный формат id пользователя' });
+//     }
+
+//     const user = await user.findById(userId);
+
+//     if (!user) {
+//       return res.status(404).json({ message: 'Пользователь не найден' });
+//     }
+
+//     return res.status(200).json(user);
+//   } catch (error) {
+//     return res.status(500).json({ message: error.message });
+//   }
+// };
 const getUserById = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // Проверка корректности формата id пользователя
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ message: 'Некорректный формат id пользователя' });
-    }
-
-    const user = await User.findById(userId);
+    const user = await user.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: 'Пользователь не найден' });
@@ -30,14 +46,14 @@ const getUserById = async (req, res) => {
 
     return res.status(200).json(user);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: 'Произошла ошибка при обработке запроса' });
   }
 };
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
-  User.create({ name, about, avatar })
+  user.create({ name, about, avatar })
     .then((user) => {
       res.status(201).json(user);
     })
@@ -52,7 +68,7 @@ const createUser = (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const newUserData = await User.findByIdAndUpdate(
+    const newUserData = await user.findByIdAndUpdate(
       req.user._id,
       req.body,
       { new: true, runValidators: true },
@@ -82,7 +98,7 @@ const updateProfile = async (req, res) => {
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
+  user.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         res.status(404).json({ message: 'Пользователь не найден' });
