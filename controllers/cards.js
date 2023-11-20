@@ -34,7 +34,7 @@ const deleteCardById = async (req, res) => {
 
     return res.status(SUCCESS).json({ message: 'Карточка успешно удалена' });
   } catch (error) {
-    if (error.message === 'NotFound') {
+    if (error.message === NOT_FOUND) {
       return res
         .status(NOT_FOUND)
         .send({ message: 'Карточка не найдена' });
@@ -63,7 +63,7 @@ const handleLikeDislike = async (req, res, update) => {
 
     return res.status(SUCCESS).json(card);
   } catch (error) {
-    if (error.message === 'NotFound') {
+    if (error.message === NOT_FOUND) {
       return res
         .status(NOT_FOUND)
         .send({ message: 'Карточка не найдена' });

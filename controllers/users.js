@@ -27,7 +27,7 @@ const getUserById = async (req, res) => {
 
     return res.status(SUCCESS).json(user);
   } catch (error) {
-    if (error.message === 'NotFound') {
+    if (error.message === NOT_FOUND) {
       return res
         .status(NOT_FOUND)
         .send({ message: 'Пользователь не найден' });
