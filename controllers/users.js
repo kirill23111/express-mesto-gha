@@ -58,13 +58,12 @@ const createUser = async (req, res, next) => {
       password: hashedPassword,
     });
 
-    res.status(CREATED).json(user);
+    return res.status(CREATED).json(user);
   } catch (error) {
     if (error.name === 'ValidationError') {
       return next(new BadRequest('Произошла ошибка'));
-    } else {
-      return next(new Internal('Произошла ошибка'));
     }
+    return next(new Internal('Произошла ошибка'));
   }
 };
 
@@ -77,7 +76,7 @@ const login = async (req, res, next) => {
 
     // Проверяем, найден ли пользователь и совпадает ли пароль
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(NotFound).json({ message: 'Неправильная почта или пароль' });
+      return next(new NotFound('Неправильная почта или пароль'));
     }
 
     const token = generateJwtToken({
@@ -96,7 +95,7 @@ const login = async (req, res, next) => {
   }
 };
 
-const updateProfile = async (req, res) => {
+const updateProfile = async (req, res, next ) => {
   try {
     const { name, about } = req.body;
     const newUserData = await User.findByIdAndUpdate(
@@ -112,20 +111,16 @@ const updateProfile = async (req, res) => {
     return res.status(SUCCESS).send(newUserData);
   } catch (err) {
     if (err.message === 'NotFound') {
-      return res
-        .status(NotFound)
-        .send({ message: 'Пользователь не найден' });
+      return next(new NotFound('Пользователь не найден'));
     }
-
-    if (err.name === 'ValidationError') {
-      return res.status(BadRequest).send({ message: `${err.message}` });
+    if (error.name === 'ValidationError') {
+      return next(new BadRequest('Произошла ошибка'));
     }
-
-    return res.status(Internal).send({ message: 'произошла ошибка' });
+    return next(new Internal('Произошла ошибка'));
   }
 };
 
-const updateAvatar = async (req, res) => {
+const updateAvatar = async (req, res, next) => {
   try {
     const { avatar } = req.body;
 
@@ -142,14 +137,14 @@ const updateAvatar = async (req, res) => {
     return res.status(SUCCESS).json(updatedUser);
   } catch (error) {
     if (error.message === 'NotFound') {
-      return res.status(NotFound).json({ message: 'Пользователь не найден' });
+      return next(new NotFound('Пользователь не найден'));
     }
 
     if (error.name === 'ValidationError') {
-      return res.status(BadRequest).json({ message: error.message });
+      return next(new BadRequest('Произошла ошибка'));
     }
 
-    return res.status(Internal).json({ message: 'Произошла ошибка' });
+    return next(new Internal('Произошла ошибка'));
   }
 };
 
