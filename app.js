@@ -8,6 +8,7 @@ const PORT = 3000;
 const cardsRoutes = require('./routes/cardsRoutes');
 const usersRoutes = require('./routes/usersRoutes');
 const errorHandler = require('./middlewares/errorHandler');
+const { createUsers, login } = require('./controllers/users');
 
 // Middleware для установки req.user
 // app.use((req, res, next) => {
@@ -24,8 +25,8 @@ app.use(cookieParser());
 app.use(errorHandler);
 app.use('/', cardsRoutes);
 app.use('/', usersRoutes);
-app.post('/signin', usersRoutes.login);
-app.post('/signup', usersRoutes.createUser);
+app.post('/signin', login);
+app.post('/signup', createUsers);
 
 // Подключение к базе данных
 mongoose.connect('mongodb://localhost:27017/mestodb', {
@@ -42,17 +43,6 @@ db.on('error', (error) => {
 db.once('open', () => {
   console.log('Подключено к MongoDB!');
 });
-
-// Добавим 'next' в параметры функции, чтобы избежать ошибки
-// app.use((err, req, res, next) => {
-//   console.log(err.status);
-//   res.status(INTERNAL_ERROR).send({ message: 'Произошла ошибка' });
-//   next();
-// });
-
-// app.use((req, res) => {
-//   res.status(NOT_FOUND).json({ message: 'не удалось обнаружить' });
-// });
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

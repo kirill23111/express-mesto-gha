@@ -11,8 +11,8 @@ usersRouter.get('/users', authMiddleware, usersController.getUsers);
 usersRouter.get('/users/:userId', authMiddleware, usersController.getUserById);
 
 // Роут для создания нового пользователя
-usersRouter.post('/signin', usersController.login);
-usersRouter.post('/signup', usersController.createUser);
+// usersRouter.post('/signin', usersController.login);
+// usersRouter.post('/signup', usersController.createUser);
 
 // Роут для обновления профиля пользователя
 usersRouter.patch('/users/me', authMiddleware, usersController.updateProfile);
