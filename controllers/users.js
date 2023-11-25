@@ -20,7 +20,7 @@ const getUsers = async (req, res, next) => {
   }
 };
 // Контроллер для получения пользователя по _id
-const getUserById = async (req, res) => {
+const getUserById = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.userId);
 
@@ -37,7 +37,7 @@ const getUserById = async (req, res) => {
   }
 };
 
-const createUser = async (req, res) => {
+const createUser = async (req, res, next) => {
   try {
     const {
       name = 'Жак-Ив Кусто',
@@ -61,9 +61,9 @@ const createUser = async (req, res) => {
     res.status(CREATED).json(user);
   } catch (error) {
     if (error.name === 'ValidationError') {
-      res.status(BadRequest).json({ message: error.message });
+      return next(new BadRequest('Произошла ошибка'));
     } else {
-      res.status(Internal).json({ message: 'Internal Server Error' });
+      return next(new Internal('Произошла ошибка'));
     }
   }
 };
