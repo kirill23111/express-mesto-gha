@@ -9,7 +9,8 @@ const authMiddleware = (req, res, next) => {
 
   if (!token) {
     // Если токен отсутствует, возвращаем ошибку 401
-    return res.status(Internal).json({ message: 'Токен отсутствует' });
+    // return res.status(Internal).json({ message: 'Токен отсутствует' });
+    return next(new Internal('Необходима авторизация'));
   }
 
   try {
@@ -23,7 +24,8 @@ const authMiddleware = (req, res, next) => {
     return next();
   } catch (error) {
     // Если токен невалиден, возвращаем ошибку 401
-    return res.status(Internal).json({ message: 'Неверный токен' });
+    // return res.status(Internal).json({ message: 'Неверный токен' });
+    return next(new Internal('Неверный токен'));
   }
 };
 
