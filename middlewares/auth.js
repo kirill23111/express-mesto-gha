@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const NotFound = require('../errors/NotFound');
+const Internal = require('../errors/Internal');
 
 // const { JWT_SECRET, NODE_ENV } = process.env;
 
@@ -9,7 +9,7 @@ const authMiddleware = (req, res, next) => {
 
   if (!token) {
     // Если токен отсутствует, возвращаем ошибку 401
-    return res.status(NotFound).json({ message: 'Токен отсутствует' });
+    return res.status(Internal).json({ message: 'Токен отсутствует' });
   }
 
   try {
@@ -23,7 +23,7 @@ const authMiddleware = (req, res, next) => {
     return next();
   } catch (error) {
     // Если токен невалиден, возвращаем ошибку 401
-    return res.status(NotFound).json({ message: 'Неверный токен' });
+    return res.status(Internal).json({ message: 'Неверный токен' });
   }
 };
 
