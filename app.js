@@ -8,7 +8,7 @@ const PORT = 3000;
 const cardsRoutes = require('./routes/cardsRoutes');
 const usersRoutes = require('./routes/usersRoutes');
 const errorHandler = require('./middlewares/errorHandler');
-const { createUsers, login } = require('./controllers/users');
+const { createUser, login } = require('./controllers/users');
 
 // Middleware для установки req.user
 // app.use((req, res, next) => {
@@ -26,7 +26,7 @@ app.use(errorHandler);
 app.use('/', cardsRoutes);
 app.use('/', usersRoutes);
 app.post('/signin', login);
-app.post('/signup', createUsers);
+app.post('/signup', createUser);
 
 // Подключение к базе данных
 mongoose.connect('mongodb://localhost:27017/mestodb', {
