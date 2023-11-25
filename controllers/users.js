@@ -95,7 +95,7 @@ const login = async (req, res, next) => {
   }
 };
 
-const updateProfile = async (req, res, next ) => {
+const updateProfile = async (req, res, next) => {
   try {
     const { name, about } = req.body;
     const newUserData = await User.findByIdAndUpdate(
@@ -113,7 +113,7 @@ const updateProfile = async (req, res, next ) => {
     if (err.message === 'NotFound') {
       return next(new NotFound('Пользователь не найден'));
     }
-    if (error.name === 'ValidationError') {
+    if (err.name === 'ValidationError') {
       return next(new BadRequest('Произошла ошибка'));
     }
     return next(new Internal('Произошла ошибка'));
