@@ -1,31 +1,31 @@
 const express = require('express');
-
 const morgan = require('morgan');
-
+const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 
 const app = express();
 const PORT = 3000;
-const {
-  INTERNAL_ERROR, NOT_FOUND,
-} = require('./constans/codes');
 const cardsRoutes = require('./routes/cardsRoutes');
 const usersRoutes = require('./routes/usersRoutes');
+const errorHandler = require('./middlewares/errorHandler');
 
 // Middleware для установки req.user
-app.use((req, res, next) => {
-  req.user = {
-    _id: '5e44647cabaee231048130ab',
-  };
-  next();
-});
+// app.use((req, res, next) => {
+//   req.user = {
+//     _id: '5e44647cabaee231048130ab',
+//   };
+//   next();
+// });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
-
+app.use(cookieParser());
+app.use(errorHandler);
 app.use('/', cardsRoutes);
 app.use('/', usersRoutes);
+app.post('/signin', usersRoutes.login);
+app.post('/signup', usersRoutes.createUser);
 
 // Подключение к базе данных
 mongoose.connect('mongodb://localhost:27017/mestodb', {
@@ -44,15 +44,15 @@ db.once('open', () => {
 });
 
 // Добавим 'next' в параметры функции, чтобы избежать ошибки
-app.use((err, req, res, next) => {
-  console.log(err.status);
-  res.status(INTERNAL_ERROR).send({ message: 'Произошла ошибка' });
-  next();
-});
+// app.use((err, req, res, next) => {
+//   console.log(err.status);
+//   res.status(INTERNAL_ERROR).send({ message: 'Произошла ошибка' });
+//   next();
+// });
 
-app.use((req, res) => {
-  res.status(NOT_FOUND).json({ message: 'не удалось обнаружить' });
-});
+// app.use((req, res) => {
+//   res.status(NOT_FOUND).json({ message: 'не удалось обнаружить' });
+// });
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
