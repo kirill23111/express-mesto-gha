@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    select: false
+    select: false,
   },
 });
 userSchema.pre('save', async function (next) {
