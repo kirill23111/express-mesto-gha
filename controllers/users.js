@@ -63,7 +63,7 @@ const createUser = async (req, res, next) => {
     if (error.name === 'ValidationError') {
       return next(new BadRequest('Ошибка валидации'));
     }
-    return next(new Internal('Произошла ошибка'));
+    return next(new BadRequest('Произошла ошибка'));
   }
 };
 
