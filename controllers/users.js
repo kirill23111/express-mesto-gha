@@ -31,7 +31,7 @@ const getUserById = async (req, res, next) => {
     return res.status(SUCCESS).json(user);
   } catch (error) {
     if (error.name === 'CastError') {
-      return next(new BadRequest('Передан невалидный id'));
+      return next(new NotFound('Пользователь не найден'));
     }
     return next(new Internal('Произошла ошибка'));
   }
@@ -61,7 +61,7 @@ const createUser = async (req, res, next) => {
     return res.status(CREATED).json(user);
   } catch (error) {
     if (error.name === 'ValidationError') {
-      return next(new BadRequest('Произошла ошибка'));
+      return next(new BadRequest('Ошибка валидации'));
     }
     return next(new Internal('Произошла ошибка'));
   }

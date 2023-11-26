@@ -15,7 +15,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(cookieParser());
-app.use(errorHandler);
 app.use('/', cardsRoutes);
 app.use('/', usersRoutes);
 
@@ -44,6 +43,7 @@ app.post(
   login,
 );
 
+app.use(errorHandler);
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
