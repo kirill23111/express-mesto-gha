@@ -11,7 +11,7 @@ const authMiddleware = (req, res, next) => {
 
   try {
     // Верификация токена
-    const { iat, exp, ...payload} = jwt.verify(token, privateKey);
+    const payload = jwt.verify(token, privateKey);
 
     // Добавляем payload в объект запроса
     req.user = payload;
