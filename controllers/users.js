@@ -37,7 +37,7 @@ const getUserById = async (req, res, next) => {
   }
 };
 
-const createUser = async (req, res, next) => {
+const registration = async (req, res, next) => {
   try {
     const {
       name = 'Жак-Ив Кусто',
@@ -47,24 +47,84 @@ const createUser = async (req, res, next) => {
       password,
     } = req.body;
 
-    // Хеширование пароля перед сохранением в базу
-    const hashedPassword = await bcrypt.hash(password, 10);
+    if (!email) throw new BadRequest('Email обязателен');
 
-    const user = await User.create({
-      name,
-      about,
-      avatar,
-      email,
-      password: hashedPassword,
-    });
+    const findedUser = await getUserByEmail(email);
 
-    return res.status(CREATED).json(user);
+    if (findedUser !== null) throw new BadRequest('Пользователь с таким Email существует');
+
+    const createdUser = createUser(req.body);
+
+    return res.status(CREATED).json(createdUser);
   } catch (error) {
     if (error.name === 'ValidationError') {
       return next(new BadRequest('Ошибка валидации'));
     }
-    return next(new BadRequest('Произошла ошибка'));
+    if (!error.message) return next(new BadRequest('Произошла ошибка'));
+    return next(new BadRequest(error.message));
   }
+};
+
+// возвращает либо Promise с пользователем, либо Promise с null
+const getUserByEmail = async (email) => {
+  try {
+    const user = await User.findOne({ email: email });
+    return user;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const createUser = async (registrationUserDto) => {
+  // try {
+  //   const {
+  //     name = 'Жак-Ив Кусто',
+  //     about = 'Исследователь',
+  //     avatar = 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+  //     email,
+  //     password,
+  //   } = req.body;
+
+  //   // Хеширование пароля перед сохранением в базу
+  //   const hashedPassword = await bcrypt.hash(password, 10);
+
+  //   const user = await User.create({
+  //     name,
+  //     about,
+  //     avatar,
+  //     email,
+  //     password: hashedPassword,
+  //   });
+
+  //   return res.status(CREATED).json(user);
+  // } catch (error) {
+    // if (error.name === 'ValidationError') {
+    //   return next(new BadRequest('Ошибка валидации'));
+    // }
+    // return next(new BadRequest('Произошла ошибка'));
+  // }
+
+  const {
+    name = 'Жак-Ив Кусто',
+    about = 'Исследователь',
+    avatar = 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    email,
+    password,
+  } = registrationUserDto;
+
+  // Хеширование пароля перед сохранением в базу
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const user = await User.create({
+    name,
+    about,
+    avatar,
+    email,
+    password: hashedPassword
+  });
+
+  return user;
+
 };
 
 const login = async (req, res, next) => {
@@ -157,8 +217,8 @@ module.exports = {
   getUsers,
   getUserById,
   login,
-  createUser,
   updateProfile,
   getCurrentUser,
   updateAvatar,
+  registration
 };

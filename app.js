@@ -9,21 +9,18 @@ const PORT = 3000;
 // const cardsRoutes = require('./routes/cardsRoutes');
 // const usersRoutes = require('./routes/usersRoutes');
 const { errors } = require('celebrate'); // Добавляем обработку ошибок celebrate
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const routes = require('./routes');
+const routes = require('./routes/index');
 const errorHandler = require('./middlewares/errorHandler');
-const { createUser, login } = require('./controllers/users');
+const { login, registration } = require('./controllers/users');
 
 app.use(express.json());
-app.use(cors()); // Обработка CORS
-app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(cookieParser());
 // app.use('/', cardsRoutes);
 // app.use('/', usersRoutes);
 app.use('/api', routes);
+// console.log(routes)
 
 app.post(
   '/signup',
@@ -36,7 +33,7 @@ app.post(
       password: Joi.string().required(),
     }),
   }),
-  createUser,
+  registration,
 );
 
 app.post(
@@ -49,12 +46,10 @@ app.post(
   }),
   login,
 );
+
 app.use(errors());
 app.use(errorHandler);
-mongoose.connect('mongodb://localhost:27017/mestodb', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect('mongodb://localhost:27017/mestodb');
 
 const db = mongoose.connection;
 
