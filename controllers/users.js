@@ -184,7 +184,8 @@ const updateAvatar = async (req, res, next) => {
 };
 
 const getCurrentUser = (req, res) => {
-  const currentUser = req.user;
+  const { password, ...currentUser} = req.user;
+
   res.status(SUCCESS).json(currentUser);
 };
 
