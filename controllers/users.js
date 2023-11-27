@@ -21,6 +21,7 @@ const getUsers = async (req, res, next) => {
 };
 // Контроллер для получения пользователя по _id
 const getUserById = async (req, res, next) => {
+  console.log('getUserById');
   try {
     const user = await User.findById(req.params.userId);
 
@@ -39,9 +40,7 @@ const getUserById = async (req, res, next) => {
 
 // возвращает либо Promise с пользователем, либо Promise с null
 const getUserByEmail = async (email) => {
-  const user = await User.findOne({ email });
-
-  return user;
+  return await User.findOne({ email });
 };
 
 const createUser = async (registrationUserDto) => {
@@ -68,7 +67,6 @@ const createUser = async (registrationUserDto) => {
 };
 
 const registration = async (req, res, next) => {
-
   try {
     const {
       email,
@@ -97,26 +95,40 @@ const login = async (req, res, next) => {
     const { email, password } = req.body;
 
     // Находим пользователя по email
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select('+password');
 
-    // Проверяем, найден ли пользователь и совпадает ли пароль
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return next(new NotFound('Неправильная почта или пароль'));
+    // Проверяем, найден ли пользователь
+    if (user === null) throw new NotFound(`Пользователя с email ${email} не существует`);
+
+    // Проверяем, совпадает ли пароль
+    bcrypt.compare(password, user.password, (err, result) => {
+      if (result === false) throw new BadRequest(`Неправильный пароль`);
+
+      const token = generateJwtToken({
+        email: email,
+        password: user.password
+      });
+
+      res.cookie('jwt', token, {
+        httpOnly: true,
+        sameSite: true,
+        maxAge: 3600000 * 24 * 7,
+      });
+
+      res.header('authorization', token);
+
+      return res.send({ token });
+
+    });
+
+  } catch (error) {
+
+    if (error.name === 'ValidationError') {
+      return next(new BadRequest('Ошибка валидации'));
     }
+    if (!error.message) return next(new BadRequest('Произошла ошибка'));
+    return next(new BadRequest(error.message));
 
-    const token = generateJwtToken({
-      _id: user._id,
-    });
-
-    res.cookie('jwt', token, {
-      httpOnly: true,
-      sameSite: true,
-      maxAge: 3600000 * 24 * 7,
-    });
-
-    return res.send({ email: user.email });
-  } catch (err) {
-    return next(err);
   }
 };
 
@@ -173,7 +185,8 @@ const updateAvatar = async (req, res, next) => {
   }
 };
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
+  console.log(2);
   const currentUser = req.user;
   res.status(SUCCESS).json(currentUser);
 };

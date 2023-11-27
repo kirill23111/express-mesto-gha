@@ -31,9 +31,9 @@ const authMiddleware = require('../middlewares/auth');
 const router = express.Router();
 
 router.get('/', authMiddleware, usersController.getUsers);
-router.get('/:userId', authMiddleware, usersController.getUserById);
 router.patch('/me', authMiddleware, usersController.updateProfile);
 router.patch('/me/avatar', authMiddleware, usersController.updateAvatar);
 router.get('/me', authMiddleware, usersController.getCurrentUser);
+router.get('/:userId', authMiddleware, usersController.getUserById);
 
 module.exports = router;

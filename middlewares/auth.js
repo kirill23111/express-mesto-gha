@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const Internal = require('../errors/Internal');
+const { privateKey } = require('../constans/keys');
 
 const authMiddleware = (req, res, next) => {
   const token = req.headers.authorization;
@@ -10,14 +11,17 @@ const authMiddleware = (req, res, next) => {
 
   try {
     // Верификация токена
-    const payload = jwt.verify(token, 'your-secret-key');
+    const payload = jwt.verify(token, privateKey);
 
     // Добавляем payload в объект запроса
     req.user = payload;
+    console.log(3);
 
     // Вызываем следующий middleware или обработчик маршрута
-    return next();
+    next();
+    return;
   } catch (error) {
+    console.error(error);
     return next(new Internal('Неверный токен'));
   }
 };
