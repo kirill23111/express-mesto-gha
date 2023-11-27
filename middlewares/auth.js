@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const Internal = require('../errors/Internal');
 
 const authMiddleware = (req, res, next) => {
-
   const token = req.headers.authorization;
 
   if (!token) {
