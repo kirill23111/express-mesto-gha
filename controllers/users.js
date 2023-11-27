@@ -68,6 +68,7 @@ const createUser = async (registrationUserDto) => {
 };
 
 const registration = async (req, res, next) => {
+
   try {
     const {
       email,
@@ -79,7 +80,7 @@ const registration = async (req, res, next) => {
 
     if (findedUser !== null) throw new BadRequest('Пользователь с таким Email существует');
 
-    const createdUser = createUser(req.body);
+    const createdUser = await createUser(req.body);
 
     return res.status(CREATED).json(createdUser);
   } catch (error) {
