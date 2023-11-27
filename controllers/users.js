@@ -39,9 +39,7 @@ const getUserById = async (req, res, next) => {
 };
 
 // возвращает либо Promise с пользователем, либо Promise с null
-const getUserByEmail = async (email) => {
-  return await User.findOne({ email });
-};
+const getUserByEmail = async (email) => await User.findOne({ email });
 
 const createUser = async (registrationUserDto) => {
   const {
@@ -63,7 +61,7 @@ const createUser = async (registrationUserDto) => {
     password: hashedPassword,
   });
 
-  return user;
+  return user._doc;
 };
 
 const registration = async (req, res, next) => {
@@ -78,7 +76,10 @@ const registration = async (req, res, next) => {
 
     if (findedUser !== null) throw new BadRequest('Пользователь с таким Email существует');
 
-    const createdUser = await createUser(req.body);
+    // удаление поля password из созданного пользователя
+    const { password, ...createdUser } = await createUser(req.body);
+
+    console.log(createdUser);
 
     return res.status(CREATED).json(createdUser);
   } catch (error) {
@@ -102,33 +103,30 @@ const login = async (req, res, next) => {
 
     // Проверяем, совпадает ли пароль
     bcrypt.compare(password, user.password, (err, result) => {
-      if (result === false) throw new BadRequest(`Неправильный пароль`);
+      if (result === false) throw new BadRequest('Неправильный пароль');
 
       const token = generateJwtToken({
-        email: email,
-        password: user.password
+        email,
+        password: user.password,
       });
 
-      res.cookie('authorization', token, {
+      res.cookie('jwt', token, {
         httpOnly: true,
         sameSite: true,
         maxAge: 3600000 * 24 * 7,
       });
 
-      res.header('authorization', token);
+      res.header('jwt', token);
 
       return res.send({ token });
-
     });
-
+    return;
   } catch (error) {
-
     if (error.name === 'ValidationError') {
       return next(new BadRequest('Ошибка валидации'));
     }
     if (!error.message) return next(new BadRequest('Произошла ошибка'));
     return next(new BadRequest(error.message));
-
   }
 };
 
@@ -185,8 +183,7 @@ const updateAvatar = async (req, res, next) => {
   }
 };
 
-const getCurrentUser = (req, res, next) => {
-  console.log(2);
+const getCurrentUser = (req, res) => {
   const currentUser = req.user;
   res.status(SUCCESS).json(currentUser);
 };
