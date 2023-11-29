@@ -72,7 +72,7 @@ const registration = async (req, res, next) => {
     const foundUser = await getUserByEmail(email);
 
     if (foundUser !== null) {
-      return res.status(Conflict).json({ error: 'Пользователь с таким Email уже существует' });
+      return res.status(new Conflict).json({ error: 'Пользователь с таким Email уже существует' });
     }
 
     const { password, ...createdUser } = await createUser(req.body);
@@ -123,8 +123,8 @@ const login = async (req, res, next) => {
     if (error.name === 'ValidationError') {
       return next(new BadRequest('Ошибка валидации'));
     }
-    if (!error.message) return next(new BadRequest('Произошла ошибка'));
-    return next(new BadRequest(error.message));
+    if (!error.message) return next(new NotFound('Произошла ошибка'));
+    return next(new NotFound(error.message));
   }
 };
 
