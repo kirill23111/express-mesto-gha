@@ -61,14 +61,6 @@ const createUser = async (registrationUserDto) => {
   });
 
   return user._doc;
-  // return res
-  //   .status(SUCCESS)
-  //   .send({
-  //     name: newUser.name,
-  //     about: newUser.about,
-  //     avatar: newUser.avatar,
-  //     email: newUser.email,
-  //   });
 };
 
 const registration = async (req, res, next) => {
