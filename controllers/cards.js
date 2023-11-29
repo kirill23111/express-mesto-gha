@@ -45,7 +45,7 @@ const deleteCardById = async (req, res, next) => {
     return res.status(SUCCESS).json({ message: 'Карточка успешно удалена' });
   } catch (error) {
     console.error(error);
-    return next(new Internal('Произошла ошибка при удалении карточки'));
+    return next(new NotFound('Произошла ошибка при удалении карточки'));
   }
 };
 
@@ -70,7 +70,7 @@ const handleLikeDislike = async (req, res, next, update) => {
     }
 
     if (error.name === 'CastError') {
-      return next(new BadRequest('Передано неверное id карточки'));
+      return next(new Forbidden('Передано неверное id карточки'));
     }
 
     return next(new NotFound('Произошла ошибка при обработке лайка/дизлайка'));
