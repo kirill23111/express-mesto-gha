@@ -35,7 +35,7 @@ const getUserById = async (req, res, next) => {
     if (error.name === 'CastError') {
       return next(new NotFound('Пользователь не найден'));
     }
-    return next(new Internal('Произошла ошибка'));
+    return next(new NotFound('Произошла ошибка'));
   }
 };
 
