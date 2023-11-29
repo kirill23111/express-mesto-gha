@@ -159,20 +159,28 @@ const updateAvatar = async (req, res, next) => {
   try {
     const { avatar } = req.body;
 
+    // Проверяем существование пользователя перед обновлением
+    const existingUser = await User.findById(req.user._id);
+    if (!existingUser) {
+      throw new NotFound('Пользователь не найден');
+    }
+
+    // Проверяем, совпадает ли новый аватар с текущим
+    if (avatar === existingUser.avatar) {
+      return res.status(SUCCESS).json(existingUser);
+    }
+
+    // Обновляем аватар пользователя
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
       { avatar },
-      { new: true, runValidators: true },
+      { new: true, runValidators: true }
     );
-
-    if (!updatedUser) {
-      throw new Error('NotFound');
-    }
 
     return res.status(SUCCESS).json(updatedUser);
   } catch (error) {
-    if (error.message === 'NotFound') {
-      return next(new NotFound('Пользователь не найден'));
+    if (error instanceof NotFound) {
+      return next(error);
     }
 
     if (error.name === 'ValidationError') {
