@@ -20,7 +20,14 @@
 
 // module.exports = cardsRouter;
 const express = require('express');
-const cardsController = require('../controllers/cards');
+// const cardsController = require('../controllers/cards');
+const {
+  getCards,
+  createCard,
+  deleteCardById,
+  likeCard,
+  dislikeCard,
+} = require('../controllers/cards');
 const {
   createCardValidation,
   dislikeCardValidation,
@@ -30,10 +37,10 @@ const {
 
 const router = express.Router();
 
-router.get('/cards', cardsController.getCards);
-router.post('/cards', createCardValidation, cardsController.createCard);
-router.delete('/cards/:cardId', deleteCardByIdValidation, cardsController.deleteCardById);
-router.put('/cards/:cardId/likes', likeCardValidation, cardsController.likeCard);
-router.delete('/cards/:cardId/likes', dislikeCardValidation, cardsController.dislikeCard);
+router.get('/cards', getCards);
+router.post('/cards', createCardValidation, createCard);
+router.delete('/cards/:cardId', deleteCardByIdValidation, deleteCardById);
+router.put('/cards/:cardId/likes', likeCardValidation, likeCard);
+router.delete('/cards/:cardId/likes', dislikeCardValidation, dislikeCard);
 
 module.exports = router;
