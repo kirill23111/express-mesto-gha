@@ -27,13 +27,18 @@
 const express = require('express');
 const usersController = require('../controllers/users');
 const authMiddleware = require('../middlewares/auth');
+const {
+  getUserByIdValidation,
+  updateProfileValidation,
+  updateAvatarValidation,
+} = require('../middlewares/validation');
 
 const router = express.Router();
 
-router.get('/', authMiddleware, usersController.getUsers);
-router.patch('/me', authMiddleware, usersController.updateProfile);
-router.patch('/me/avatar', authMiddleware, usersController.updateAvatar);
-router.get('/me', authMiddleware, usersController.getCurrentUser);
-router.get('/:userId', authMiddleware, usersController.getUserById);
+router.get('/', authMiddleware, getUsers);
+router.patch('/me', authMiddleware, updateProfileValidation.updateProfile);
+router.patch('/me/avatar', authMiddleware, updateAvatarValidation.updateAvatar);
+router.get('/me', authMiddleware, getCurrentUser);
+router.get('/:userId', authMiddleware, getUserByIdValidation.getUserById);
 
 module.exports = router;
