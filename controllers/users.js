@@ -139,9 +139,9 @@ const updateProfile = async (req, res, next) => {
       { new: true, runValidators: true },
     );
 
-    if (!newUserData) {
-      throw new NotFound('Пользователь не найден');
-    }
+    // if (!newUserData) {
+    //   throw new NotFound('Пользователь не найден');
+    // }
 
     return res.status(SUCCESS).send(newUserData);
   } catch (err) {
