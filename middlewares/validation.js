@@ -38,7 +38,19 @@ const updateAvatarValidation = celebrate({
   }),
 });
 
-const cardIdValidation = celebrate({
+const deleteCardByIdValidation = celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().length(24).hex().required(),
+  }),
+});
+
+const likeCardValidation = celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().length(24).hex().required(),
+  }),
+});
+
+const dislikeCardValidation = celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().length(24).hex().required(),
   }),
@@ -46,16 +58,8 @@ const cardIdValidation = celebrate({
 
 const createCardValidation = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30).required()
-      .messages({
-        'string.min': 'Имя должно содержать как минимум 2 символа',
-        'string.max': 'Имя должно содержать не более 30 символов',
-        'any.required': 'Имя обязательно для заполнения',
-      }),
-    link: Joi.string().regex(URL_REGEX).required().messages({
-      'string.pattern.base': 'Поле link должно быть валидным URL-адресом',
-      'any.required': 'Поле link обязательно для заполнения',
-    }),
+    name: Joi.string().required().min(2).max(30),
+    link: Joi.string().required().regex(URL_REGEX),
   }),
 });
 
@@ -66,5 +70,7 @@ module.exports = {
   updateProfileValidation,
   updateAvatarValidation,
   createCardValidation,
-  cardIdValidation,
+  deleteCardByIdValidation,
+  dislikeCardValidation,
+  likeCardValidation,
 };
