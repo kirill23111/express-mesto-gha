@@ -72,7 +72,7 @@ const registration = async (req, res, next) => {
     const foundUser = await getUserByEmail(email);
 
     if (foundUser !== null) {
-      return res.status(new Conflict).json({ error: 'Пользователь с таким Email уже существует' });
+      return next(new Conflict('Пользователь с таким Email уже существует'));
     }
 
     const { password, ...createdUser } = await createUser(req.body);
