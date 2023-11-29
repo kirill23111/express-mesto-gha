@@ -21,12 +21,16 @@
 // module.exports = cardsRouter;
 const express = require('express');
 const cardsController = require('../controllers/cards');
+const {
+  createCardValidation,
+  cardIdValidation,
+} = require('../middlewares/validation');
 
 const router = express.Router();
 
 router.get('/cards', cardsController.getCards);
-router.post('/cards', cardsController.createCard);
-router.delete('/cards/:cardId', cardsController.deleteCardById);
+router.post('/cards', createCardValidation, cardsController.createCard);
+router.delete('/cards/:cardId', cardIdValidation, cardsController.deleteCardById);
 router.put('/cards/:cardId/likes', cardsController.likeCard);
 router.delete('/cards/:cardId/likes', cardsController.dislikeCard);
 
