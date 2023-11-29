@@ -59,7 +59,7 @@ const dislikeCardValidation = celebrate({
 const createCardValidation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().regex(URL_REGEX),
+    avatar: Joi.string().regex(URL_REGEX).required(),
   }),
 });
 
