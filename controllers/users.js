@@ -141,13 +141,14 @@ const updateProfile = async (req, res, next) => {
     );
 
     if (!newUserData) {
-      throw new Error('NotFound');
+      // Изменено: Бросаем NotFound ошибку
+      throw new NotFound('Пользователь не найден');
     }
 
     return res.status(SUCCESS).send(newUserData);
   } catch (err) {
-    if (err.message === 'NotFound') {
-      return next(new NotFound('Пользователь не найден'));
+    if (err instanceof NotFound) {
+      return next(err);
     }
     if (err.name === 'ValidationError') {
       return next(new BadRequest('Произошла ошибка'));
