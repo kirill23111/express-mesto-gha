@@ -19,7 +19,7 @@ const authMiddleware = (req, res, next) => {
     // Вызываем следующий middleware или обработчик маршрута
     return next();
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     return next(new Internal('Неверный токен'));
   }
 };

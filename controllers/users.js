@@ -74,14 +74,11 @@ const registration = async (req, res, next) => {
     const foundUser = await getUserByEmail(email);
 
     if (foundUser !== null) {
-      // User with the given email already exists
       return res.status(Conflict).json({ error: 'Пользователь с таким Email уже существует' });
     }
 
-    // Remove the 'password' field from the created user
     const { password, ...createdUser } = await createUser(req.body);
-
-    console.log(createdUser);
+    // console.log(createdUser);
 
     return res.status(CREATED).json(createdUser);
   } catch (error) {
@@ -106,9 +103,11 @@ const login = async (req, res, next) => {
     // Проверяем, совпадает ли пароль
     bcrypt.compare(password, user.password, (err, result) => {
       if (result === false) throw new BadRequest('Неправильный пароль');
-
+      // const { name, about } = user;
       const token = generateJwtToken({
         email,
+        // name,
+        // about,
         password: user.password,
       });
 
@@ -141,7 +140,6 @@ const updateProfile = async (req, res, next) => {
     );
 
     if (!newUserData) {
-      // Изменено: Бросаем NotFound ошибку
       throw new NotFound('Пользователь не найден');
     }
 

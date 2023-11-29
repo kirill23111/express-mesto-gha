@@ -47,5 +47,4 @@ router.delete('/:cardId', deleteCardByIdValidation, deleteCardById);
 router.put('/:cardId/likes', likeCardValidation, likeCard);
 router.delete('/:cardId/likes', dislikeCardValidation, dislikeCard);
 
-
 module.exports = router;

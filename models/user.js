@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     required: true,
+    validate: {
+      validator: (value) => validator.isURL(value),
+      message: 'Invalid URL format for avatar',
+    },
   },
   email: {
     type: String,
