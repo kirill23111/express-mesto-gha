@@ -65,15 +65,15 @@ const handleLikeDislike = async (req, res, next, update) => {
 
     return res.status(SUCCESS).json(card);
   } catch (error) {
-    if (error.message === 'NotFound') {
-      return next(new NotFound('Карточка не найдена'));
+    if (error instanceof NotFound) {
+      return next(error);
     }
 
     if (error.name === 'CastError') {
       return next(new BadRequest('Передано неверное id карточки'));
     }
 
-    return next(new Internal('Произошла ошибка при обработке лайка/дизлайка'));
+    return next(new NotFound('Произошла ошибка при обработке лайка/дизлайка'));
   }
 };
 
