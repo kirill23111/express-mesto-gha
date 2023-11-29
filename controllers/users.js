@@ -42,25 +42,33 @@ const getUserById = async (req, res, next) => {
 // возвращает либо Promise с пользователем, либо Promise с null
 const getUserByEmail = async (email) => await User.findOne({ email });
 
-const createUser = async (req, res) => {
+const createUser = async (registrationUserDto) => {
+  const {
+    name = 'Жак-Ив Кусто',
+    about = 'Исследователь',
+    avatar = 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    email,
+    password,
+  } = registrationUserDto;
   // Хеширование пароля перед сохранением в базу
-  const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
-  const newUser = await new User({
-    name: req.body.name,
-    about: req.body.about,
-    avatar: req.body.avatar,
-    email: req.body.email,
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const user = await User.create({
+    name,
+    about,
+    avatar,
+    email,
     password: hashedPassword,
-  }).save();
-  return res
-    .status(SUCCESS)
-    .send({
-      name: newUser.name,
-      about: newUser.about,
-      avatar: newUser.avatar,
-      email: newUser.email,
-    });
+  });
+
+  return user._doc;
+  // return res
+  //   .status(SUCCESS)
+  //   .send({
+  //     name: newUser.name,
+  //     about: newUser.about,
+  //     avatar: newUser.avatar,
+  //     email: newUser.email,
+  //   });
 };
 
 const registration = async (req, res, next) => {
@@ -130,20 +138,16 @@ const login = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
   try {
-    // const { name, about } = req.body;
-    // const newUserData = await User.findByIdAndUpdate(
-    //   req.user._id,
-    //   { name, about },
-    //   { new: true, runValidators: true },
-    // );
-    const newUserData = await User.findByIdAndUpdate(req.user._id, req.body, {
-      new: true,
-      runValidators: true,
-    }).orFail(() => next(new NotFound('Пользователь не найден')));
+    const { name, about } = req.body;
+    const newUserData = await User.findByIdAndUpdate(
+      req.user._id,
+      { name, about },
+      { new: true, runValidators: true },
+    );
 
-    // if (!newUserData) {
-    //   throw new NotFound('Пользователь не найден');
-    // }
+    if (!newUserData) {
+      throw new NotFound('Пользователь не найден');
+    }
 
     return res.status(SUCCESS).send(newUserData);
   } catch (err) {
