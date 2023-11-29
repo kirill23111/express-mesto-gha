@@ -31,13 +31,11 @@ const deleteCardById = async (req, res, next) => {
     const userId = req.user._id;
 
     const card = await Card.findById(cardId);
-
+    if (card.owner.toString() !== userId) {
+      return next(new Forbidden('Вы не можете удалить чужую карточку'));
+    }
     if (!card) {
       return next(new NotFound('Карточка не найдена'));
-    }
-
-    if (card.owner.toString() !== userId) {
-      return next(new Forbidden('Нет прав для удаления карточки'));
     }
 
     await card.remove();
@@ -70,7 +68,7 @@ const handleLikeDislike = async (req, res, next, update) => {
     }
 
     if (error.name === 'CastError') {
-      return next(new Forbidden('Передано неверное id карточки'));
+      return next(new BadRequest('Передано неверное id карточки'));
     }
 
     return next(new NotFound('Произошла ошибка при обработке лайка/дизлайка'));
