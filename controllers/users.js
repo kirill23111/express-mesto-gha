@@ -97,7 +97,7 @@ const login = async (req, res, next) => {
 
     // Проверяем, найден ли пользователь
     if (user === null) {
-      return next(new NotFound(`Пользователя с email ${email} не существует`));
+      return next(new Internal(`Пользователя с email ${email} не существует`));
     }
 
     // Проверяем, совпадает ли пароль
