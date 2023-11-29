@@ -19,7 +19,7 @@ const createCard = async (req, res, next) => {
     return res.status(CREATED).send(await card.save());
   } catch (error) {
     if (error.name === 'ValidationError') {
-      return next(new BadRequest(`${error.message}`));
+      return next(new Forbidden(`${error.message}`));
     }
     return next(new Internal('Произошла ошибка при создании карточки'));
   }

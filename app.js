@@ -58,7 +58,15 @@ db.on('error', (error) => {
 db.once('open', () => {
   console.log('Подключено к MongoDB!');
 });
+app.use((req, res, next) => {
+  res.status(404).json({ message: 'Запрашиваемый ресурс не найден' });
+});
 
+// Обработчик ошибок
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  res.status(statusCode).json({ message });
+});
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
