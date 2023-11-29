@@ -19,8 +19,6 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 app.use('/cards', cardsRoutes);
 app.use('/users', usersRoutes);
-// app.use('/api', routes);
-// console.log(routes)
 
 app.post(
   '/signup',
