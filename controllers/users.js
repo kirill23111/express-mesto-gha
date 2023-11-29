@@ -131,30 +131,34 @@ const login = async (req, res, next) => {
 };
 
 const updateProfile = async (req, res, next) => {
-  try {
-    const { name, about } = req.body;
-    const newUserData = await User.findByIdAndUpdate(
-      req.user._id,
-      { name, about },
-      { new: true, runValidators: true },
-    );
-
-    // if (!newUserData) {
-    //   throw new NotFound('Пользователь не найден');
-    // }
-
-    return res.status(SUCCESS).send(newUserData);
-  } catch (err) {
-    if (err instanceof NotFound) {
-      return next(err);
-    }
-    if (err.name === 'ValidationError') {
-      return next(new BadRequest('Произошла ошибка'));
-    }
-    return next(new Internal('Произошла ошибка'));
-  }
+  // try {
+  const { name, about } = req.body;
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, about },
+    { new: true, runValidators: true },
+  )
+    .then((user) => {
+      if (user === null) {
+        throw new NotFound('Пользователь не найден');
+      }
+      return res
+        .status(SUCCESS)
+        .send({
+          name: user.name,
+          about: user.about,
+        });
+    })
+    .catch((err) => {
+      if (err instanceof NotFound) {
+        return next(err);
+      }
+      if (err.name === 'ValidationError') {
+        return next(new BadRequest('Произошла ошибка'));
+      }
+      return next(new Internal('Произошла ошибка'));
+    });
 };
-
 const updateAvatar = async (req, res, next) => {
   try {
     const { avatar } = req.body;
