@@ -46,8 +46,16 @@ const cardIdValidation = celebrate({
 
 const createCardValidation = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30).required(),
-    link: Joi.string().regex(URL_REGEX).required(),
+    name: Joi.string().min(2).max(30).required()
+      .messages({
+        'string.min': 'Имя должно содержать как минимум 2 символа',
+        'string.max': 'Имя должно содержать не более 30 символов',
+        'any.required': 'Имя обязательно для заполнения',
+      }),
+    link: Joi.string().regex(URL_REGEX).required().messages({
+      'string.pattern.base': 'Поле link должно быть валидным URL-адресом',
+      'any.required': 'Поле link обязательно для заполнения',
+    }),
   }),
 });
 

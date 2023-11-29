@@ -9,7 +9,7 @@ const PORT = 3000;
 const { errors } = require('celebrate'); // Добавляем обработку ошибок celebrate
 const cardsRoutes = require('./routes/cardsRoutes');
 const usersRoutes = require('./routes/usersRoutes');
-const routes = require('./routes/index');
+// const routes = require('./routes/index');
 const errorHandler = require('./middlewares/errorHandler');
 const { login, registration } = require('./controllers/users');
 
