@@ -130,11 +130,12 @@ const login = async (req, res, next) => {
   }
 };
 
-const updateProfile = async (req, res, next) => {
-  // try {
+const updateProfile = (req, res, next) => {
+  const userId = req.user._id;
   const { name, about } = req.body;
+
   User.findByIdAndUpdate(
-    req.user._id,
+    userId,
     { name, about },
     { new: true, runValidators: true },
   )
@@ -150,15 +151,18 @@ const updateProfile = async (req, res, next) => {
         });
     })
     .catch((err) => {
-      if (err instanceof NotFound) {
-        return next(err);
-      }
       if (err.name === 'ValidationError') {
-        return next(new BadRequest('Произошла ошибка'));
+        next(new BadRequest('Некорректные данные'));
+        return;
       }
-      return next(new Internal('Произошла ошибка'));
+      if (err.name === 'CastError') {
+        next(new NotFound('Пользователь не найден'));
+        return;
+      }
+      next(err);
     });
 };
+
 const updateAvatar = async (req, res, next) => {
   try {
     const { avatar } = req.body;
