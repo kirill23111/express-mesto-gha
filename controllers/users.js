@@ -9,6 +9,7 @@ const {
 const BadRequest = require('../errors/BadRequest');
 const NotFound = require('../errors/NotFound');
 const Internal = require('../errors/Internal');
+const Conflict = require('../errors/Conflict');
 // Контроллер для получения всех пользователей
 
 const getUsers = async (req, res, next) => {
@@ -66,17 +67,18 @@ const createUser = async (registrationUserDto) => {
 
 const registration = async (req, res, next) => {
   try {
-    const {
-      email,
-    } = req.body;
+    const { email } = req.body;
 
     if (!email) throw new BadRequest('Email обязателен');
 
-    const findedUser = await getUserByEmail(email);
+    const foundUser = await getUserByEmail(email);
 
-    if (findedUser !== null) throw new BadRequest('Пользователь с таким Email существует');
+    if (foundUser !== null) {
+      // User with the given email already exists
+      return res.status(Conflict).json({ error: 'Пользователь с таким Email уже существует' });
+    }
 
-    // удаление поля password из созданного пользователя
+    // Remove the 'password' field from the created user
     const { password, ...createdUser } = await createUser(req.body);
 
     console.log(createdUser);
@@ -120,7 +122,6 @@ const login = async (req, res, next) => {
 
       return res.send({ token });
     });
-    return;
   } catch (error) {
     if (error.name === 'ValidationError') {
       return next(new BadRequest('Ошибка валидации'));
@@ -184,7 +185,7 @@ const updateAvatar = async (req, res, next) => {
 };
 
 const getCurrentUser = (req, res) => {
-  const { password, ...currentUser} = req.user;
+  const { password, ...currentUser } = req.user;
 
   res.status(SUCCESS).json(currentUser);
 };
