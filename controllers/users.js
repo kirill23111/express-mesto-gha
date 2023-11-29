@@ -96,7 +96,9 @@ const login = async (req, res, next) => {
     const user = await User.findOne({ email }).select('+password');
 
     // Проверяем, найден ли пользователь
-    if (user === null) throw new NotFound(`Пользователя с email ${email} не существует`);
+    if (user === null) {
+      return next(new NotFound(`Пользователя с email ${email} не существует`));
+    }
 
     // Проверяем, совпадает ли пароль
     bcrypt.compare(password, user.password, (err, result) => {
