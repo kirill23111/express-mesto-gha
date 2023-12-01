@@ -63,14 +63,14 @@ app.use(errors());
 app.use(errorHandler);
 
 // app.use((err, req, res, next) => {
-//   console.log(err.status);
+//   console.log(2);
 //   res.status(500).send({ message: 'Произошла ошибка' });
 //   next();
 // });
 
-app.use((req, res) => {
-  res.status(404).json({ message: 'не удалось обнаружить' });
-});
+// app.use((req, res) => {
+//   res.status(404).json({ message: 'не удалось обнаружить' });
+// });
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

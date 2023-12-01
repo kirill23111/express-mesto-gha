@@ -22,7 +22,6 @@ const getUsers = async (req, res, next) => {
 };
 // Контроллер для получения пользователя по id
 const getUserById = async (req, res, next) => {
-  console.log('getUserById');
   try {
     const user = await User.findById(req.params.userId);
 
@@ -60,17 +59,21 @@ const createUser = async (registrationUserDto) => {
     password: hashedPassword,
   });
 
-  return user.$model;
+  return user;
 };
 
-const getFormattedUser = (user) => ({
-  _id: user._id,
-  name: user.name,
-  about: user.about,
-  avatar: user.avatar,
-  email: user.email,
-  password: user.password,
-});
+const getFormattedUser = (user) => {
+  const jsonUser = JSON.parse(JSON.stringify(user));
+
+  return {
+    _id: jsonUser._id,
+    name: jsonUser.name,
+    about: jsonUser.about,
+    avatar: jsonUser.avatar,
+    email: jsonUser.email,
+    password: jsonUser.password,
+  }
+};
 
 const registration = async (req, res, next) => {
   try {
