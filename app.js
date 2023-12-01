@@ -3,12 +3,13 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
-const {
-  createUserValidation,
-} = require('./middlewares/validation');
+
 const app = express();
 const PORT = 3000;
 const { errors } = require('celebrate'); // Добавляем обработку ошибок celebrate
+const {
+  createUserValidation,
+} = require('./middlewares/validation');
 const cardsRoutes = require('./routes/cardsRoutes');
 const usersRoutes = require('./routes/usersRoutes');
 // const routes = require('./routes/index');
@@ -26,7 +27,7 @@ app.use(cookieParser());
 app.use('/cards', cardsRoutes);
 app.use('/users', usersRoutes);
 
-app.post('/signup',createUserValidation,registration);
+app.post('/signup', createUserValidation, registration);
 
 app.post(
   '/signin',
