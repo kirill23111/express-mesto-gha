@@ -62,11 +62,11 @@ db.once('open', () => {
 app.use(errors());
 app.use(errorHandler);
 
-app.use((err, req, res, next) => {
-  console.log(err.status);
-  res.status(500).send({ message: 'Произошла ошибка' });
-  next();
-});
+// app.use((err, req, res, next) => {
+//   console.log(err.status);
+//   res.status(500).send({ message: 'Произошла ошибка' });
+//   next();
+// });
 
 app.use((req, res) => {
   res.status(404).json({ message: 'не удалось обнаружить' });

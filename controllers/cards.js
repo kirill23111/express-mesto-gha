@@ -12,7 +12,6 @@ const getCards = (req, res, next) => {
 };
 
 const createCard = async (req, res, next) => {
-  console.log(req.user);
 
   try {
     const { name, link } = req.body;
@@ -31,18 +30,18 @@ const deleteCardById = async (req, res, next) => {
   try {
     const { cardId } = req.params;
     const userId = req.user.id;
-
     const card = await Card.findById(cardId);
+
+    if (card === null) {
+      return next(new NotFound('Карточка не найдена'));
+    }
     if (card.owner.toString() !== userId) {
       return next(new Forbidden('Вы не можете удалить чужую карточку'));
     }
-    if (!card) {
-      return next(new NotFound('Карточка не найдена'));
-    }
 
-    await card.remove();
+    const deletedInfo = await Card.deleteOne({ _id: cardId });
 
-    return res.status(SUCCESS).json({ message: 'Карточка успешно удалена' });
+    return res.json({ message: 'Карточка успешно удалена' });
   } catch (error) {
     console.error(error);
     return next(new NotFound('Произошла ошибка при удалении карточки'));
