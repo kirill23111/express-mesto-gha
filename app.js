@@ -3,7 +3,9 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
-
+const {
+  createUserValidation,
+} = require('./middlewares/validation');
 const app = express();
 const PORT = 3000;
 const { errors } = require('celebrate'); // Добавляем обработку ошибок celebrate
@@ -24,19 +26,7 @@ app.use(cookieParser());
 app.use('/cards', cardsRoutes);
 app.use('/users', usersRoutes);
 
-app.post(
-  '/signup',
-  celebrate({
-    body: Joi.object().keys({
-      name: Joi.string().min(2).max(30),
-      about: Joi.string().min(2).max(30),
-      avatar: Joi.string().uri(),
-      email: Joi.string().required().email(),
-      password: Joi.string().required(),
-    }),
-  }),
-  registration,
-);
+app.post('/signup',createUserValidation,registration);
 
 app.post(
   '/signin',
