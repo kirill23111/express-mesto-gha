@@ -72,7 +72,7 @@ const getFormattedUser = (user) => {
     avatar: jsonUser.avatar,
     email: jsonUser.email,
     password: jsonUser.password,
-  }
+  };
 };
 
 const registration = async (req, res, next) => {
@@ -207,10 +207,23 @@ const updateAvatar = async (req, res, next) => {
   }
 };
 
-const getCurrentUser = (req, res) => {
-  const { password, ...currentUser } = req.user;
+const getCurrentUser = (req, res, next) => {
+  try {
+    const reqUserId = req.user.id;
+    const findedUser = User.findById(reqUserId);
 
-  res.status(SUCCESS).json(currentUser);
+    if (findedUser === null) return next(new NotFound('Пользователь не найден'));
+
+    const { password, ...formattedUser } = getFormattedUser(findedUser);
+
+    return res.json(formattedUser);
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      return next(new BadRequest('Ошибка валидации'));
+    }
+    if (!error.message) return next(new NotFound('Произошла ошибка'));
+    return next(new NotFound(error.message));
+  }
 };
 
 module.exports = {
