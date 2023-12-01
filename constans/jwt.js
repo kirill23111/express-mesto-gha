@@ -18,14 +18,9 @@ const { privateKey } = require('./keys');
 
 const JWT_SECRET = privateKey;
 
-const generateJwtToken = ({
-  email, password,
-}) => {
-  const payload = {
-    email, password,
-  };
+const generateJwtToken = (obj) => {
 
-  const token = jwt.sign(payload, JWT_SECRET, {
+  const token = jwt.sign(obj, JWT_SECRET, {
     expiresIn: '7d',
   });
 

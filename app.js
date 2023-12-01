@@ -15,6 +15,10 @@ const { login, registration } = require('./controllers/users');
 const NotFound = require('./errors/NotFound');
 const Internal = require('./errors/Internal');
 
+mongoose.connect('mongodb://localhost:27017/mestodb');
+
+const db = mongoose.connection;
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
@@ -47,12 +51,6 @@ app.post(
   login,
 );
 
-app.use(errors());
-app.use(errorHandler);
-mongoose.connect('mongodb://localhost:27017/mestodb');
-
-const db = mongoose.connection;
-
 db.on('error', (error) => {
   console.error('Ошибка подключения к MongoDB:', error);
 });
@@ -60,28 +58,9 @@ db.on('error', (error) => {
 db.once('open', () => {
   console.log('Подключено к MongoDB!');
 });
-// app.use((err, req, res, next) => next(new Internal({ message: 'Произошла ошибка' })));
-// app.use((req, res) => {
-//   res.status(new NotFound()).json({ message: 'не удалось обнаружить' });
-// });
 
-// app.use((err, req, res, next) => {
-//   // res.status(500).send({ message: 'Произошла ошибка' });
-//   next(new Internal('Произошла ошибка'));
-// });
-
-// app.use((req, res) => {
-//   res.status(404).json(new NotFound('Не удалось обнаружить').toObj());
-// });
-
-app.use((err, req, res, next) => {
-  res.status(500).send({ message: 'Произошла ошибка' });
-  next();
-});
-
-app.use((req, res) => {
-  res.status(404).json({ message: 'не удалось обнаружить' });
-});
+app.use(errors());
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

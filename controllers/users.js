@@ -101,24 +101,24 @@ const login = async (req, res, next) => {
     }
 
     // Проверяем, совпадает ли пароль
-    bcrypt.compare(password, user.password, (err, result) => {
-      if (result === false) throw new BadRequest('Неправильный пароль');
-      // const { name, about } = user;
-      const token = generateJwtToken({
-        email,
-        password: user.password,
-      });
+    const passwordResult = bcrypt.compareSync(password, user.password);
 
-      res.cookie('jwt', token, {
+    if (passwordResult === false) throw new BadRequest('Неправильный пароль');
+
+    const token = generateJwtToken({
+      id: user.id,
+      email,
+      password: user.password,
+    });
+
+    return res
+      .cookie('jwt', token, {
         httpOnly: true,
         sameSite: true,
         maxAge: 3600000 * 24 * 7,
-      });
-
-      res.header('jwt', token);
-
-      return res.send({ token });
-    });
+      })
+      .header('jwt', token)
+      .send({ token });
   } catch (error) {
     if (error.name === 'ValidationError') {
       return next(new BadRequest('Ошибка валидации'));
