@@ -1,24 +1,3 @@
-// const express = require('express');
-// const cardsController = require('../controllers/cards'); // Путь к файлу с контроллерами карточек
-
-// const cardsRouter = express.Router();
-
-// // Роут для получения всех карточек
-// cardsRouter.get('/cards', cardsController.getCards);
-
-// // Роут для создания новой карточки
-// cardsRouter.post('/cards', cardsController.createCard);
-
-// // Роут для удаления карточки по _id
-// cardsRouter.delete('/cards/:cardId', cardsController.deleteCardById);
-
-// // Роут для постановки лайка карточке
-// cardsRouter.put('/cards/:cardId/likes', cardsController.likeCard);
-
-// // Роут для снятия лайка с карточки
-// cardsRouter.delete('/cards/:cardId/likes', cardsController.dislikeCard);
-
-// module.exports = cardsRouter;
 const express = require('express');
 const {
   getCards,
@@ -37,15 +16,10 @@ const authMiddleware = require('../middlewares/auth');
 
 const router = express.Router();
 
-// router.get('/cards', getCards);
-// router.post('/cards', createCardValidation, createCard);
-// router.delete('/cards/:cardId', deleteCardByIdValidation, deleteCardById);
-// router.put('/cards/:cardId/likes', likeCardValidation, likeCard);
-// router.delete('/cards/:cardId/likes', dislikeCardValidation, dislikeCard);
 router.get('/', getCards);
-router.post('/', [createCardValidation, authMiddleware], createCard);
-router.delete('/:cardId', [deleteCardByIdValidation, authMiddleware], deleteCardById);
-router.put('/:cardId/likes', [likeCardValidation, authMiddleware], likeCard);
-router.delete('/:cardId/likes', [dislikeCardValidation, authMiddleware], dislikeCard);
+router.post('/', [authMiddleware, createCardValidation], createCard);
+router.delete('/:cardId', [authMiddleware, deleteCardByIdValidation], deleteCardById);
+router.put('/:cardId/likes', [authMiddleware, likeCardValidation], likeCard);
+router.delete('/:cardId/likes', [authMiddleware, dislikeCardValidation], dislikeCard);
 
 module.exports = router;
