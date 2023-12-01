@@ -33,6 +33,7 @@ const {
   deleteCardByIdValidation,
   likeCardValidation,
 } = require('../middlewares/validation');
+const authMiddleware = require('../middlewares/auth');
 
 const router = express.Router();
 
@@ -42,7 +43,7 @@ const router = express.Router();
 // router.put('/cards/:cardId/likes', likeCardValidation, likeCard);
 // router.delete('/cards/:cardId/likes', dislikeCardValidation, dislikeCard);
 router.get('/', getCards);
-router.post('/', createCardValidation, createCard);
+router.post('/', [createCardValidation, authMiddleware], createCard);
 router.delete('/:cardId', deleteCardByIdValidation, deleteCardById);
 router.put('/:cardId/likes', likeCardValidation, likeCard);
 router.delete('/:cardId/likes', dislikeCardValidation, dislikeCard);

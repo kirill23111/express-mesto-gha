@@ -12,6 +12,8 @@ const getCards = (req, res, next) => {
 };
 
 const createCard = async (req, res, next) => {
+  console.log(req.user);
+
   try {
     const { name, link } = req.body;
     const card = await new Card({ name, link, owner: req.user._id });

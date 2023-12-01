@@ -12,6 +12,8 @@ const usersRoutes = require('./routes/usersRoutes');
 // const routes = require('./routes/index');
 const errorHandler = require('./middlewares/errorHandler');
 const { login, registration } = require('./controllers/users');
+const NotFound = require('./errors/NotFound');
+const Internal = require('./errors/Internal');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -58,15 +60,29 @@ db.on('error', (error) => {
 db.once('open', () => {
   console.log('Подключено к MongoDB!');
 });
-app.use((req, res) => {
-  res.status(404).json({ message: 'Запрашиваемый ресурс не найден' });
+// app.use((err, req, res, next) => next(new Internal({ message: 'Произошла ошибка' })));
+// app.use((req, res) => {
+//   res.status(new NotFound()).json({ message: 'не удалось обнаружить' });
+// });
+
+// app.use((err, req, res, next) => {
+//   // res.status(500).send({ message: 'Произошла ошибка' });
+//   next(new Internal('Произошла ошибка'));
+// });
+
+// app.use((req, res) => {
+//   res.status(404).json(new NotFound('Не удалось обнаружить').toObj());
+// });
+
+app.use((err, req, res, next) => {
+  res.status(500).send({ message: 'Произошла ошибка' });
+  next();
 });
 
-// Обработчик ошибок
-app.use((res, err) => {
-  const { statusCode = 500, message } = err;
-  res.status(statusCode).json({ message });
+app.use((req, res) => {
+  res.status(404).json({ message: 'не удалось обнаружить' });
 });
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

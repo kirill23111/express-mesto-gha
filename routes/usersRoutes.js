@@ -36,9 +36,9 @@ const {
 const router = express.Router();
 
 router.get('/', authMiddleware, usersController.getUsers);
+router.get('/me', authMiddleware, usersController.getCurrentUser);
 router.patch('/me', authMiddleware, updateProfileValidation, usersController.updateProfile);
 router.patch('/me/avatar', authMiddleware, updateAvatarValidation, usersController.updateAvatar);
-router.get('/me', authMiddleware, usersController.getCurrentUser);
 router.get('/:userId', authMiddleware, getUserByIdValidation, usersController.getUserById);
 
 module.exports = router;

@@ -106,8 +106,6 @@ const login = async (req, res, next) => {
       // const { name, about } = user;
       const token = generateJwtToken({
         email,
-        // name,
-        // about,
         password: user.password,
       });
 
@@ -132,6 +130,7 @@ const login = async (req, res, next) => {
 
 const updateProfile = (req, res, next) => {
   const userId = req.user._id;
+  console.log(userId);
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(
@@ -152,14 +151,12 @@ const updateProfile = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequest('Некорректные данные'));
-        return;
+        return next(new BadRequest('Некорректные данные'));
       }
       if (err.name === 'CastError') {
-        next(new NotFound('Пользователь не найден'));
-        return;
+        return next(new NotFound('Пользователь не найден'));
       }
-      next(err);
+      return next(err);
     });
 };
 
