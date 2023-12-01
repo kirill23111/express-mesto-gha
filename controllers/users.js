@@ -39,7 +39,7 @@ const getUserById = async (req, res, next) => {
 };
 
 // возвращает либо Promise с пользователем, либо Promise с null
-const getUserByEmail = async (email) => await User.findOne({ email });
+const getUserByEmail = async (email) => User.findOne({ email });
 
 const createUser = async (registrationUserDto) => {
   const {

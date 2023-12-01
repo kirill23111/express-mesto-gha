@@ -12,8 +12,6 @@ const usersRoutes = require('./routes/usersRoutes');
 // const routes = require('./routes/index');
 const errorHandler = require('./middlewares/errorHandler');
 const { login, registration } = require('./controllers/users');
-const NotFound = require('./errors/NotFound');
-const Internal = require('./errors/Internal');
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
@@ -61,12 +59,6 @@ db.once('open', () => {
 
 app.use(errors());
 app.use(errorHandler);
-
-// app.use((err, req, res, next) => {
-//   console.log(2);
-//   res.status(500).send({ message: 'Произошла ошибка' });
-//   next();
-// });
 
 app.use((req, res) => {
   if (res.headersSent === false) res.status(404).json({ message: 'Не удалось обнаружить' });
