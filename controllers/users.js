@@ -72,7 +72,7 @@ const getFormattedUser = (user) => {
     avatar: jsonUser.avatar,
     email: jsonUser.email,
     password: jsonUser.password,
-  }
+  };
 };
 
 const registration = async (req, res, next) => {
@@ -212,9 +212,7 @@ const getCurrentUser = async (req, res, next) => {
     const reqUserId = req.user.id;
     const findedUser = await User.findById(reqUserId).lean();
 
-    if (findedUser === null) return next(new NotFound('Пользователь не найден'))
-
-    // const { password, ...formattedUser } = getFormattedUser(findedUser);
+    if (findedUser === null) return next(new NotFound('Пользователь не найден'));
 
     return res.json(findedUser);
   } catch (error) {

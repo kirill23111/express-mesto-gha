@@ -68,9 +68,9 @@ app.use(errorHandler);
 //   next();
 // });
 
-// app.use((req, res) => {
-//   res.status(404).json({ message: 'не удалось обнаружить' });
-// });
+app.use((req, res) => {
+  if (res._headerSent === false) res.status(404).json({ message: 'Не удалось обнаружить' });
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
