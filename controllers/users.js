@@ -20,7 +20,7 @@ const getUsers = async (req, res, next) => {
     return next(err);
   }
 };
-// Контроллер для получения пользователя по _id
+// Контроллер для получения пользователя по id
 const getUserById = async (req, res, next) => {
   console.log('getUserById');
   try {
@@ -60,7 +60,7 @@ const createUser = async (registrationUserDto) => {
     password: hashedPassword,
   });
 
-  return user._doc;
+  return user;
 };
 
 const registration = async (req, res, next) => {
