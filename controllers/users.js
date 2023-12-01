@@ -60,8 +60,17 @@ const createUser = async (registrationUserDto) => {
     password: hashedPassword,
   });
 
-  return user;
+  return user.$model;
 };
+
+const getFormattedUser = (user) => ({
+  _id: user._id,
+  name: user.name,
+  about: user.about,
+  avatar: user.avatar,
+  email: user.email,
+  password: user.password,
+});
 
 const registration = async (req, res, next) => {
   try {
@@ -75,10 +84,10 @@ const registration = async (req, res, next) => {
       return next(new Conflict('Пользователь с таким Email уже существует'));
     }
 
-    const { password, ...createdUser } = await createUser(req.body);
-    // console.log(createdUser);
+    const createdUser = await createUser(req.body);
+    const { password, ...formatedCreatedUser } = getFormattedUser(createdUser);
 
-    return res.status(CREATED).json(createdUser);
+    return res.status(CREATED).json(formatedCreatedUser);
   } catch (error) {
     if (error.name === 'ValidationError') {
       return next(new BadRequest('Ошибка валидации'));

@@ -8,8 +8,8 @@ class NotFound extends Error {
   toObj() {
     return {
       message: this.message,
-      statusCode: this.statusCode
-    }
+      statusCode: this.statusCode,
+    };
   }
 }
 

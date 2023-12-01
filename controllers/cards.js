@@ -12,7 +12,6 @@ const getCards = (req, res, next) => {
 };
 
 const createCard = async (req, res, next) => {
-
   try {
     const { name, link } = req.body;
     const card = await new Card({ name, link, owner: req.user.id });
@@ -39,7 +38,7 @@ const deleteCardById = async (req, res, next) => {
       return next(new Forbidden('Вы не можете удалить чужую карточку'));
     }
 
-    const deletedInfo = await Card.deleteOne({ _id: cardId });
+    await Card.deleteOne({ _id: cardId });
 
     return res.json({ message: 'Карточка успешно удалена' });
   } catch (error) {
