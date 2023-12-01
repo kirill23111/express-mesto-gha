@@ -164,19 +164,19 @@ const updateAvatar = async (req, res, next) => {
     const { avatar } = req.body;
 
     // Проверяем существование пользователя перед обновлением
-    const existingUser = await User.findById(req.user._id);
-    if (!existingUser) {
+    const findedUser = await User.findById(req.user.id);
+    if (findedUser === null) {
       throw new NotFound('Пользователь не найден');
     }
 
     // Проверяем, совпадает ли новый аватар с текущим
-    if (avatar === existingUser.avatar) {
-      return res.status(SUCCESS).json(existingUser);
+    if (avatar === findedUser.avatar) {
+      return res.status(SUCCESS).json(findedUser);
     }
 
     // Обновляем аватар пользователя
     const updatedUser = await User.findByIdAndUpdate(
-      req.user._id,
+      req.user.id,
       { avatar },
       { new: true, runValidators: true },
     );
