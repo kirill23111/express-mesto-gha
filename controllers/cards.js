@@ -30,7 +30,7 @@ const createCard = async (req, res, next) => {
 const deleteCardById = async (req, res, next) => {
   try {
     const { cardId } = req.params;
-    const userId = req.user._id;
+    const userId = req.user.id;
 
     const card = await Card.findById(cardId);
     if (card.owner.toString() !== userId) {
@@ -78,11 +78,11 @@ const handleLikeDislike = async (req, res, next, update) => {
 };
 
 const likeCard = (req, res, next) => {
-  handleLikeDislike(req, res, next, { $addToSet: { likes: req.user._id } });
+  handleLikeDislike(req, res, next, { $addToSet: { likes: req.user.id } });
 };
 
 const dislikeCard = (req, res, next) => {
-  handleLikeDislike(req, res, next, { $pull: { likes: req.user._id } });
+  handleLikeDislike(req, res, next, { $pull: { likes: req.user.id } });
 };
 
 module.exports = {

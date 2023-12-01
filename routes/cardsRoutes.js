@@ -44,8 +44,8 @@ const router = express.Router();
 // router.delete('/cards/:cardId/likes', dislikeCardValidation, dislikeCard);
 router.get('/', getCards);
 router.post('/', [createCardValidation, authMiddleware], createCard);
-router.delete('/:cardId', deleteCardByIdValidation, deleteCardById);
-router.put('/:cardId/likes', likeCardValidation, likeCard);
-router.delete('/:cardId/likes', dislikeCardValidation, dislikeCard);
+router.delete('/:cardId', [deleteCardByIdValidation, authMiddleware], deleteCardById);
+router.put('/:cardId/likes', [likeCardValidation, authMiddleware], likeCard);
+router.delete('/:cardId/likes', [dislikeCardValidation, authMiddleware], dislikeCard);
 
 module.exports = router;
