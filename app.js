@@ -69,7 +69,7 @@ app.use(errorHandler);
 // });
 
 app.use((req, res) => {
-  if (res._headerSent === false) res.status(404).json({ message: 'Не удалось обнаружить' });
+  if (res.headersSent === false) res.status(404).json({ message: 'Не удалось обнаружить' });
 });
 
 app.listen(PORT, () => {
