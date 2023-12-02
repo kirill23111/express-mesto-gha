@@ -50,11 +50,8 @@ db.once('open', () => {
   console.log('Подключено к MongoDB!');
 });
 
-app.use('/unknown-route', authMiddleware, (req, res, next) => {
-  if (res.headersSent === false) {
-    return next(new NotFound('Не удалось обнаружить'));
-  }
-  return next();
+app.use('/unknown-route', authMiddleware, (req, res) => {
+  if (res.headersSent === false) throw new NotFound('Не удалось обнаружить');
 });
 
 app.use(errors());
