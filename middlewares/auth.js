@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const Internal = require('../errors/Internal');
 // const { privateKey } = require('../constans/keys');
-
+const privateKey = 'your-secret-key';
 const authMiddleware = (req, res, next) => {
   const token = req.cookies.jwt;
 
@@ -11,7 +11,7 @@ const authMiddleware = (req, res, next) => {
 
   try {
     // Верификация токена
-    const { iat, exp, ...payload } = jwt.verify(token, 'your-secret-key');
+    const { iat, exp, ...payload } = jwt.verify(token, privateKey);
     // Добавляем payload в объект запроса
     req.user = payload;
 

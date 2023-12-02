@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
-// const { privateKey } = require('./keys');
 
-const JWT_SECRET = process.env;
+const privateKey = 'your-secret-key';
+
+const JWT_SECRET = privateKey;
 
 const generateJwtToken = (obj) => {
   const token = jwt.sign(obj, JWT_SECRET, {
