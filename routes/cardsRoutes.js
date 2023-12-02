@@ -16,7 +16,7 @@ const authMiddleware = require('../middlewares/auth');
 
 const router = express.Router();
 
-router.get('/', getCards);
+router.get('/',authMiddleware, getCards);
 router.post('/', [authMiddleware, createCardValidation], createCard);
 router.delete('/:cardId', [authMiddleware, deleteCardByIdValidation], deleteCardById);
 router.put('/:cardId/likes', [authMiddleware, likeCardValidation], likeCard);
