@@ -16,6 +16,7 @@ const usersRoutes = require('./routes/usersRoutes');
 const errorHandler = require('./middlewares/errorHandler');
 const { login, registration } = require('./controllers/users');
 const authMiddleware = require('./middlewares/auth');
+const NotFound = require('./errors/NotFound');
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
@@ -49,10 +50,11 @@ db.once('open', () => {
   console.log('Подключено к MongoDB!');
 });
 
-app.use('/unknown-route', authMiddleware, (req, res, next) => {
-  const error = new Error('Not Found');
-  error.status = 404;
-  next(error);
+app.use('/unknown-route', authMiddleware, (req, res) => {
+
+  if (res.headersSent === false) {
+    return next(new NotFound('Не удалось обнаружить'));
+  }
 });
 
 app.use(errors());
