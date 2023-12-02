@@ -43,7 +43,7 @@ const deleteCardById = async (req, res, next) => {
     return res.json({ message: 'Карточка успешно удалена' });
   } catch (error) {
     console.error(error);
-    return next(new NotFound('Произошла ошибка при удалении карточки'));
+    return next(error);
   }
 };
 
@@ -71,7 +71,7 @@ const handleLikeDislike = async (req, res, next, update) => {
       return next(new BadRequest('Передано неверное id карточки'));
     }
 
-    return next(new NotFound('Произошла ошибка при обработке лайка/дизлайка'));
+    return next(error);
   }
 };
 

@@ -32,9 +32,9 @@ const getUserById = async (req, res, next) => {
     return res.status(SUCCESS).json(user);
   } catch (error) {
     if (error.name === 'CastError') {
-      return next(new NotFound('Пользователь не найден'));
+      return next(new BadRequest('Передается невалидный id'));
     }
-    return next(new NotFound('Произошла ошибка'));
+    return next(error);
   }
 };
 
@@ -96,7 +96,7 @@ const registration = async (req, res, next) => {
       return next(new BadRequest('Ошибка валидации'));
     }
     if (!error.message) return next(new BadRequest('Произошла ошибка'));
-    return next(new BadRequest(error.message));
+    return next(error);
   }
 };
 
@@ -115,7 +115,7 @@ const login = async (req, res, next) => {
     // Проверяем, совпадает ли пароль
     const passwordResult = bcrypt.compareSync(password, user.password);
 
-    if (passwordResult === false) throw new BadRequest('Неправильный пароль');
+    if (passwordResult === false) throw new Internal('Неправильный пароль');
 
     const token = generateJwtToken({
       id: user.id,
@@ -135,8 +135,8 @@ const login = async (req, res, next) => {
     if (error.name === 'ValidationError') {
       return next(new BadRequest('Ошибка валидации'));
     }
-    if (!error.message) return next(new NotFound('Произошла ошибка'));
-    return next(new NotFound(error.message));
+    // if (!error.message) return next(new NotFound('Произошла ошибка'));
+    return next(error);
   }
 };
 
@@ -165,7 +165,7 @@ const updateProfile = (req, res, next) => {
         return next(new BadRequest('Некорректные данные'));
       }
       if (err.name === 'CastError') {
-        return next(new NotFound('Пользователь не найден'));
+        return next(new BadRequest('Передается невалидный id'));
       }
       return next(err);
     });
@@ -203,7 +203,7 @@ const updateAvatar = async (req, res, next) => {
       return next(new BadRequest('Произошла ошибка'));
     }
 
-    return next(new Internal('Произошла ошибка'));
+    return next(error);
   }
 };
 
@@ -220,7 +220,7 @@ const getCurrentUser = async (req, res, next) => {
       return next(new BadRequest('Ошибка валидации'));
     }
     if (!error.message) return next(new NotFound('Произошла ошибка'));
-    return next(new NotFound(error.message));
+    return next(error);
   }
 };
 
