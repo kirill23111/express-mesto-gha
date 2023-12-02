@@ -47,13 +47,11 @@ db.on('error', (error) => {
 db.once('open', () => {
   console.log('Подключено к MongoDB!');
 });
-
-app.use(errors());
-app.use(errorHandler);
-
 app.use((req, res) => {
   if (res.headersSent === false) res.status(404).json({ message: 'Не удалось обнаружить' });
 });
+app.use(errors());
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
